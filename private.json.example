@@ -1,0 +1,9 @@
+{
+    "secret": "",
+    "host": "",
+    "user": "",
+    "password": "",
+    "database": ""
+}
+
+// MySQL database and express setup

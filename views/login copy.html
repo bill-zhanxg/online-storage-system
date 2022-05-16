@@ -17,16 +17,13 @@
     <meta content="picture url" property="og:image" />
     <meta content="#0000ff" data-react-helmet="true" name="theme-color" />
     <meta charset="UTF-8">
+
+    <!-- Import -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
-    <button class="dropdown">
-        Languages
-        <div class="options">
-            <a>English</a>
-            <a>Chinese</a>
-        </div>
-    </button>
     <div class="main">
         <div style="display: flex;">
             <!-- Login Page -->
@@ -60,6 +57,14 @@
             <!-- Settings -->
             <div style="flex: auto">
                 <div class="settings">
+                    <button class="dropdown">
+                        Languages
+                        <ul class="options">
+                            <li value="English">English</li>
+                            <li value="Chinese">Chinese</li>
+                        </ul>
+                        <!-- more languages -->
+                    </button>
                 </div>
             </div>
         </div>
@@ -83,7 +88,7 @@
 
     .main {
         width: 100%;
-        height: 85vh;
+        height: 90vh;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -97,7 +102,7 @@
         display: flex;
         justify-content: start;
         align-items: center;
-        border-radius: 10px 10px 0 0;
+        border-radius: 10px 0 0 0;
     }
 
 
@@ -112,7 +117,7 @@
         font-size: 24px;
         background-color: #2298ff;
         border: none;
-        border-radius: 0 0 10px 10px;
+        border-radius: 0 0 0 10px;
     }
 
     .button:hover {
@@ -203,53 +208,31 @@
     }
 
     .dropdown {
-        background-color: #2298ff;
+        background-color: #757575;
         padding: 0.5rem 2rem;
         margin-bottom: 0;
         border: none;
-        border-radius: 10px;
-        margin: 10px;
+        border-radius: 0 10px 0 0;
         font-weight: 600;
         font-size: 16px;
         flex: 0.1;
     }
 
     .dropdown:hover {
-        background-color: #1d87e4;
+        background-color: #9d9d9d;
         transition-duration: 150ms;
         cursor: pointer;
     }
 
     .options {
         display: none;
-        position: absolute;
-        left: 10px;
-        top: 55px;
-        border-radius: 10px;
-        background-color: #383838;
-        animation-duration: 1000ms;
-        transition-duration: 1000ms;
-    }
-
-    .options a {
-        display: block;
-        padding: 1rem;
-        margin: 1rem;
-        font-size: 16px;
         background-color: #414141;
-        border-radius: 10px;
-        border: none;
-        color: white;
     }
 
     .show {
         display: block;
     }
 </style>
-
-<!-- Import -->
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/login.js"></script>
 
 </html>
