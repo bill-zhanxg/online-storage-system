@@ -11,13 +11,14 @@ function login() {
 // Show the drop down when user clicked the dropdown button
 $('.dropdown').on('click', function () {
     $('.options').toggleClass('show');
+    $('.options').toggleClass('blockAnimation');
 });
 
 // When the user click anywhere else on the document, hide the dropdown
 $(document).click(e => {
-    if ($('.renamePanel').css('display') === 'none' || $(e.target).hasClass('ContextMenu-item')) return;
-    if (!($(e.target).parents('.renamePanel').length > 0 || $(e.target).hasClass('renamePanel'))) {
-        hideRename();
+    if (!$(e.target).closest('.dropdown').length) {
+        $('.options').removeClass('show');
+        $('.options').removeClass('blockAnimation');
     }
 })
 
