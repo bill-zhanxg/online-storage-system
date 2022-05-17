@@ -60,6 +60,13 @@ app.post('/auth', function (req, res) {
     // Capture the input fields
     let username = req.body.username;
     let password = req.body.password;
+
+    // Code for none MySQL server
+    req.session.loggedin = true;
+    req.session.data = {};
+    res.end();
+    return;
+
     // Ensure the input fields exists and are not empty
     if (username && password) {
         // Execute SQL query that'll select the account from the database based on the specified username and password
