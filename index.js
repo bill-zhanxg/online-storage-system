@@ -1,4 +1,4 @@
-// importing stuff
+2// importing stuff
 const config = require('./config.json');
 const privConf = require('./private.json');
 const mysql = require('mysql');
@@ -11,7 +11,7 @@ const busboy = require('connect-busboy');
 const process = require('process');
 const dir = process.cwd();
 const app = express();
-const port = 3000;
+const port = 3002;
 
 process.on('uncaughtException', (err, origin) => {
     console.log(err);
