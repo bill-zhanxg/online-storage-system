@@ -63,7 +63,7 @@ app.post('/auth', function (req, res) {
 
     // Code for none MySQL server
     req.session.loggedin = true;
-    req.session.data = {};
+    req.session.data = { id: 1, username: 'myUsername', password: 'myPassword', email: 'myEmail@gmail.com', chatAccess: 1, controller: 1 };
     res.end();
     return;
 

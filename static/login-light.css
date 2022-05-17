@@ -1,0 +1,48 @@
+* {
+    color: white;
+}
+
+body {
+    background-color: #414141;
+}
+
+.title, .button, .login i, .signup a, .dropdown {
+    background-color: #2298ff;
+}
+
+.button:hover, .dropdown:hover {
+    background-color: #1d87e4;
+}
+
+.button:active {
+    outline-color: rgba(48, 140, 202, 0.750);
+}
+
+.button:focus {
+    outline-color: rgba(48, 140, 202, 0.750);
+}
+
+.login, .settings {
+    background-color: #242424;
+}
+
+.login input, .options a {
+    background-color: #414141;
+    color: white;
+}
+
+.error {
+    color: red;
+}
+
+.signup a:hover {
+    color: #1d83dc;
+}
+
+.options {
+    background-color: #383838;
+}
+
+.options a:hover {
+    background-color: #5f5f5f;
+}

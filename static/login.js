@@ -1,5 +1,6 @@
 // Do stuffs when page loads
 $(window).on('load', () => {
+    updateLanguage();
     $('.usernameInput').focus();
 });
 
@@ -13,24 +14,26 @@ function login() {
     });
 }
 
-$('.options a').on('click', e => {
-    hideDropDown();
+$('.languageOp a').on('click', e => {
+    hideLanguageDropDown();
     let language = $(e.target).attr('value');
+    if (!language) language = $(e.target.parentNode).attr('value');
 
     // Store the data in localStorage
     localStorage.setItem('language', language);
+    updateLanguage();
 });
 
 // Show the drop down when user clicked the dropdown button
 $('.dropdown').on('click', function () {
-    $('.options').toggleClass('show');
-    $('.options').toggleClass('blockAnimation');
+    $('.languageOp').toggleClass('show');
+    $('.languageOp').toggleClass('blockAnimation');
 });
 
 // When the user click anywhere else on the document, hide the dropdown
 $(document).click(e => {
-    if (!$(e.target).closest('.dropdown, .options').length) {
-        hideDropDown();
+    if (!$(e.target).closest('.dropdown, .languageOp').length) {
+        hideLanguageDropDown();
     }
 })
 
@@ -41,7 +44,46 @@ $('.usernameInput, .passwordInput').keypress(e => {
     }
 });
 
-function hideDropDown() {
-    $('.options').removeClass('show');
-    $('.options').removeClass('blockAnimation');
+function hideLanguageDropDown() {
+    $('.languageOp').removeClass('show');
+    $('.languageOp').removeClass('blockAnimation');
+}
+
+function hideThemeLanguageDropDown() {
+    $('.languageOp').removeClass('show');
+    $('.languageOp').removeClass('blockAnimation');
+}
+
+function updateLanguage() {
+    let language = localStorage.getItem('language');
+    switch (language) {
+        case 'en':
+            $('[lang]').hide();
+            $('[lang="en"]').show();
+            break;
+        case 'zh':
+            $('[lang]').hide();
+            $('[lang="zh"]').show();
+            break;
+        default:
+            $('[lang]').hide();
+            $('[lang="en"]').show();
+            break;
+    }
+}
+
+function updateTheme() {
+    let theme = localStorage.getItem('theme');
+    switch (theme) {
+        case 'light':
+            $('.dark-theme').attr('disabled');
+            $('.light-theme').removeAttr('disabled');
+            break;
+        case 'dark':
+            break;
+        case 'colourful':
+            break;
+    }
+    $('.dark-theme').attr('disabled');
+    $('.light-theme').removeAttr('disabled');
 }

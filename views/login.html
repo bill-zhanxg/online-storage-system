@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
 
 <head>
 
@@ -13,19 +12,33 @@
     <!-- Meta Data for Discord Rich Embed -->
     <meta content="Online Storage System" property="og:title" />
     <meta content="" property="og:description" />
-    <meta content="https://panel.bill-zhanxg.com" property="og:url" />
+    <meta content="https://storage.bill-zhanxg.com" property="og:url" />
     <meta content="picture url" property="og:image" />
     <meta content="#0000ff" data-react-helmet="true" name="theme-color" />
     <meta charset="UTF-8">
+
+    <!-- Import -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
+    <link rel="stylesheet" href="/login-main.css">
+    <link rel="stylesheet" href="/login-dark.css" class="dark-theme">
+    <link rel="stylesheet" href="/login-light.css" class="light-theme" disabled>
 </head>
 
 <body>
     <button class="dropdown">
-        Languages
+        <i class="fas fa-language">&nbsp;</i>
+        <span lang="en">Languages</span>
+        <ch lang="zh"> 中文</ch>
     </button>
-    <div class="options">
-        <a value="en">English</a>
-        <a value="ch">Chinese</a>
+    <div class="options languageOp">
+        <a value="en">
+            <span lang="en">English</span>
+            <span lang="zh">中文</span>
+        </a>
+        <a value="zh">
+            <span lang="en">Chinese</span>
+            <span lang="zh">中文</span>
+        </a>
     </div>
     <div class="main">
         <div>
@@ -34,7 +47,10 @@
                 <div>
                     <!-- Title -->
                     <div class="title">
-                        <h1>Online Storage System</h1>
+                        <h1>
+                            <span lang="en">Online Storage System</span>
+                            <ch lang="zh">中文</ch>
+                        </h1>
                     </div>
 
                     <!-- Form -->
@@ -53,7 +69,10 @@
                     </div>
 
                     <!-- Login Button-->
-                    <button class="button" onclick="login();">Login</button>
+                    <button class="button" onclick="login();">
+                        <span lang="en">Login</span>
+                        <ch lang="zh">中文</ch>
+                    </button>
                 </div>
             </div>
 
@@ -65,12 +84,19 @@
         </div>
 
     </div>
-    <p class="signup">Don't have an account? <a href="/sign-up">Create one</a></p>
+    <p class="signup">
+        <span lang="en">Don't have an account?</span>
+        <span lang="zh">中文</span>
+        &nbsp;
+        <a href="/sign-up">
+            <span lang="en">Create one</span>
+            <span lang="zh">中文</span>
+        </a>
+    </p>
 </body>
 
 <!-- Import -->
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
-<link rel="stylesheet" href="/login.css" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/login.js"></script>
 

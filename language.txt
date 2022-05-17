@@ -1,11 +1,28 @@
 English:
+Languages: 
+English: 
+Chinese: 
+French: 
+Indonesian: 
+Spanish: 
+Afrikaans: 
+Online Storage System: 
+Username: 
+Password: 
+Login: 
+Don't have an account?: 
+
 
 Chinese:
 
+
 French:
+
 
 Indonesian:
 
+
 Spanish:
+
 
 Afrikaans:
