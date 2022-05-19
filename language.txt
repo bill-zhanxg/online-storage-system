@@ -5,6 +5,7 @@ Chinese:
 French: 
 Indonesian: 
 Spanish: 
+Japanese: 
 Afrikaans: 
 Online Storage System: 
 Username: 
@@ -25,4 +26,17 @@ Indonesian:
 Spanish:
 
 
-Afrikaans:
+Japanese:
+Languages: 言語
+English: 英語
+Chinese: 中国語
+French: フランス語
+Indonesian: インドネシア語
+Spanish: スペイン語
+Japanese: 日本語
+Afrikaans: アフリカーンス語
+Online Storage System: 
+Username: ユーザー名
+Password: パスワード
+Login: ログイン
+Don't have an account?: 

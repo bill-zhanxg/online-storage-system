@@ -6,7 +6,7 @@ body {
     background-color: #414141;
 }
 
-.title, .button, .login i, .signup a, .dropdown {
+.title, .button, .login i, a, .dropdown {
     background-color: #2298ff;
 }
 
@@ -33,6 +33,10 @@ body {
 
 .error {
     color: red;
+}
+
+.signup a {
+    color: #2298ff;
 }
 
 .signup a:hover {

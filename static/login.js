@@ -1,3 +1,8 @@
+// Do stuffs before page loads
+$(window).on('ready', () => {
+    updateLanguage();
+});
+
 // Do stuffs when page loads
 $(window).on('load', () => {
     updateLanguage();
