@@ -1,0 +1,53 @@
+{
+    "en": {
+        "Languages": "Languages",
+        "English": "English",
+        "Chinese": "Chinese",
+        "French": "French",
+        "Indonesian": "Indonesian",
+        "Spanish": "Spanish",
+        "Japanese": "eeee",
+        "Online Storage System": "Online Storage System",
+        "Username": "Username",
+        "Password": "Password",
+        "Login": "Login",
+        "Don't have an account?": "Don't have an account?"
+    },
+    "zh": {
+        "Languages": "eeee",
+        "English": "eeee",
+        "Chinese": "eeee",
+        "French": "eeee",
+        "Indonesian": "eeee",
+        "Spanish": "eeee",
+        "Japanese": "eeee",
+        "Online Storage System": "eeee",
+        "Username": "eeee",
+        "Password": "eeee",
+        "Login": "eeee",
+        "Don't have an account?": "eeee"
+    },
+    "fr": {
+
+    },
+    "id": {
+
+    },
+    "es": {
+
+    },
+    "js": {
+        "Languages": "言語",
+        "English": "英語",
+        "Chinese": "中国語",
+        "French": "フランス語",
+        "Indonesian": "インドネシア語",
+        "Spanish": "スペイン語",
+        "Japanese": "日本語",
+        "Online Storage System": "eeee",
+        "Username": "ユーザー名",
+        "Password": "パスワード",
+        "Login": "ログイン",
+        "Don't have an account?": "eeee"
+    }
+}

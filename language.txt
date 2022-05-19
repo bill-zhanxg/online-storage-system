@@ -6,7 +6,6 @@ French:
 Indonesian: 
 Spanish: 
 Japanese: 
-Afrikaans: 
 Online Storage System: 
 Username: 
 Password: 
@@ -34,7 +33,6 @@ French: フランス語
 Indonesian: インドネシア語
 Spanish: スペイン語
 Japanese: 日本語
-Afrikaans: アフリカーンス語
 Online Storage System: 
 Username: ユーザー名
 Password: パスワード

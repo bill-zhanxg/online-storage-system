@@ -1,11 +1,11 @@
-// Do stuffs before page loads
-$(window).on('ready', () => {
-    updateLanguage();
-});
+let languages;
 
 // Do stuffs when page loads
 $(window).on('load', () => {
-    updateLanguage();
+    fetch('/language-login.json').then(res => res.json()).then(json => {
+        languages = json;
+        updateLanguage();
+    });
     $('.usernameInput').focus();
 });
 
@@ -60,21 +60,9 @@ function hideThemeLanguageDropDown() {
 }
 
 function updateLanguage() {
-    let language = localStorage.getItem('language');
-    switch (language) {
-        case 'en':
-            $('[lang]').hide();
-            $('[lang="en"]').show();
-            break;
-        case 'zh':
-            $('[lang]').hide();
-            $('[lang="zh"]').show();
-            break;
-        default:
-            $('[lang]').hide();
-            $('[lang="en"]').show();
-            break;
-    }
+    let languageType = localStorage.getItem('language');
+    let language = languages[languageType] || languages.en;
+    console.log(language);
 }
 
 function updateTheme() {
