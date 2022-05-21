@@ -6,7 +6,7 @@ French:
 Indonesian: 
 Spanish: 
 Japanese: 
-Online Storage System: 
+Real Time Storage System: 
 Username: 
 Password: 
 Login: 
@@ -33,7 +33,7 @@ French: フランス語
 Indonesian: インドネシア語
 Spanish: スペイン語
 Japanese: 日本語
-Online Storage System: 
+Real Time Storage System: 
 Username: ユーザー名
 Password: パスワード
 Login: ログイン

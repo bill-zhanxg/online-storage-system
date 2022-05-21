@@ -6,11 +6,11 @@ body {
     background-color: #414141;
 }
 
-.title, .button, .login i, a, .dropdown {
+.title, .button, .login i {
     background-color: #2298ff;
 }
 
-.button:hover, .dropdown:hover {
+.button:hover{
     background-color: #1d87e4;
 }
 
@@ -22,7 +22,7 @@ body {
     outline-color: rgba(48, 140, 202, 0.750);
 }
 
-.login, .settings {
+.login{
     background-color: #242424;
 }
 
@@ -32,6 +32,7 @@ body {
 }
 
 .error {
+    display: none;
     color: red;
 }
 
@@ -41,12 +42,4 @@ body {
 
 .signup a:hover {
     color: #1d83dc;
-}
-
-.options {
-    background-color: #383838;
-}
-
-.options a:hover {
-    background-color: #5f5f5f;
 }

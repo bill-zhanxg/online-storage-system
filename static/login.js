@@ -2,6 +2,7 @@ let languages;
 
 // Do stuffs when page loads
 $(window).on('load', () => {
+    updateTheme();
     fetch('/language-login.json').then(res => res.json()).then(json => {
         languages = json;
         updateLanguage();
@@ -29,18 +30,6 @@ $('.languageOp a').on('click', e => {
     updateLanguage();
 });
 
-// Show the drop down when user clicked the dropdown button
-$('.dropdown').on('click', function () {
-    $('.languageOp').toggleClass('show');
-    $('.languageOp').toggleClass('blockAnimation');
-});
-
-// When the user click anywhere else on the document, hide the dropdown
-$(document).click(e => {
-    if (!$(e.target).closest('.dropdown, .languageOp').length) {
-        hideLanguageDropDown();
-    }
-})
 
 // When user pressed enter key, press the login button
 $('.usernameInput, .passwordInput').keypress(e => {
@@ -49,34 +38,40 @@ $('.usernameInput, .passwordInput').keypress(e => {
     }
 });
 
-function hideLanguageDropDown() {
-    $('.languageOp').removeClass('show');
-    $('.languageOp').removeClass('blockAnimation');
-}
-
-function hideThemeLanguageDropDown() {
-    $('.languageOp').removeClass('show');
-    $('.languageOp').removeClass('blockAnimation');
-}
-
 function updateLanguage() {
     let languageType = localStorage.getItem('language');
     let language = languages[languageType] || languages.en;
-    console.log(language);
+    $(document).attr('title', language['Real Time Storage System']);
+    $('.languageBtn').get(0).lastChild.nodeValue = language["Languages"];
+    $('.themeBtn').get(0).lastChild.nodeValue = language["Themes"];
+    $('.title').text(language['Real Time Storage System']);
+    $('.usernameInput').attr('placeholder', language['Username']);
+    $('.passwordInput').attr('placeholder', language['Password']);
+    $('.loginBtn').text(language['Login']);
+    $('.signup').get(0).firstChild.nodeValue = language["Don't have an account?"] + ' ';
+    $('.signup a').text(language['Create one']);
 }
 
 function updateTheme() {
     let theme = localStorage.getItem('theme');
     switch (theme) {
-        case 'light':
-            $('.dark-theme').attr('disabled');
-            $('.light-theme').removeAttr('disabled');
-            break;
         case 'dark':
+            $('.dark-theme').removeAttr('disabled');
+            $('.light-theme').attr('disabled');
+            break;
+        case 'light':
+            $('.light-theme').removeAttr('disabled');
+            $('.dark-theme').attr('disabled');
             break;
         case 'colourful':
+            break;
+        default:
+            $('.dark-theme').removeAttr('disabled');
+            $('.light-theme').attr('disabled');
             break;
     }
     $('.dark-theme').attr('disabled');
     $('.light-theme').removeAttr('disabled');
 }
+
+console.log($('.options').css('width'));
