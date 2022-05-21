@@ -2,11 +2,11 @@
 CREATE DATABASE IF NOT EXISTS rtss;
 
 # Create User
-CREATE USER 'rtss'@'172.18.0.1' IDENTIFIED BY 'password';
+CREATE USER 'rtss'@'%' IDENTIFIED BY 'password';
 CREATE USER 'rtss'@'localhost' IDENTIFIED BY 'password';
 
 # Give permission to the user for accessing the database
-GRANT ALL PRIVILEGES ON rtss.* TO 'rtss'@'172.18.0.1' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON rtss.* TO 'rtss'@'%' WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON rtss.* TO 'rtss'@'localhost' WITH GRANT OPTION;
 
 # Use the Database
@@ -39,7 +39,7 @@ SHOW DATABASE;
 ALTER USER 'rtss'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
 
 # Delete database
-DROP DATABASE OSS;
+DROP DATABASE rtss;
 
 # Delete table
 DROP TABLE accounts;
