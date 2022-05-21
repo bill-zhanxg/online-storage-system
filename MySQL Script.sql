@@ -6,8 +6,8 @@ CREATE USER 'rtss'@'172.18.0.1' IDENTIFIED BY 'password';
 CREATE USER 'rtss'@'localhost' IDENTIFIED BY 'password';
 
 # Give permission to the user for accessing the database
-GRANT ALL PRIVILEGES ON OSS.* TO 'rtss'@'172.18.0.1' WITH GRANT OPTION;
-GRANT ALL PRIVILEGES ON OSS.* TO 'rtss'@'localhost' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON rtss.* TO 'rtss'@'172.18.0.1' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON rtss.* TO 'rtss'@'localhost' WITH GRANT OPTION;
 
 # Use the Database
 USE rtss;
