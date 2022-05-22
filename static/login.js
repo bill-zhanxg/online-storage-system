@@ -21,7 +21,6 @@ function login() {
 }
 
 $('.languageOp a').on('click', e => {
-    hideLanguageDropDown();
     let language = $(e.target).attr('value');
     if (!language) language = $(e.target.parentNode).attr('value');
 
@@ -29,7 +28,6 @@ $('.languageOp a').on('click', e => {
     localStorage.setItem('language', language);
     updateLanguage();
 });
-
 
 // When user pressed enter key, press the login button
 $('.usernameInput, .passwordInput').keypress(e => {
@@ -70,8 +68,4 @@ function updateTheme() {
             $('.light-theme').attr('disabled');
             break;
     }
-    $('.dark-theme').attr('disabled');
-    $('.light-theme').removeAttr('disabled');
 }
-
-console.log($('.options').css('width'));
