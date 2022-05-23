@@ -28,7 +28,17 @@ body {
 
 .login input {
     background-color: #414141;
+    transition-duration: 150ms;
     color: white;
+}
+
+.login input:hover {
+    background-color: #383838;
+}
+
+.login input:focus {
+    outline: none;
+
 }
 
 .error {
