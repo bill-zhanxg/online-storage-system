@@ -13,17 +13,22 @@
         "Password": "Password",
         "Login": "Login",
         "Don't have an account?": "Don't have an account?",
-        "Create one": "Create one"
+        "Create one": "Create one",
+        "Dark": "Dark",
+        "Light": "Light"
     },
     "zh": {
         "Languages": "语言",
+        "Chinese": "中文",
         "Themes": "主题",
         "Real Time Storage System": "实时存储系统",
         "Username": "用户名",
         "Password": "密码",
         "Login": "登录",
         "Don't have an account?": "没有账号？",
-        "Create one": "创建一个"
+        "Create one": "创建一个",
+        "Dark": "",
+        "Light": ""
     },
     "fr": {
 
