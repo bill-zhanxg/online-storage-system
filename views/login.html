@@ -17,20 +17,21 @@
     <meta content="#0000ff" data-react-helmet="true" name="theme-color" />
     <meta charset="UTF-8">
 
-    <!-- Import -->
+    <!-- Import CSS -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/output.css">
-    <link rel="stylesheet" href="/login-main.css">
-    <link rel="stylesheet" href="/login-dark.css" class="dark-theme">
-    <link rel="stylesheet" href="/login-light.css" class="light-theme" disabled>
+    <link rel="stylesheet" href="/login/main.css">
+    <link rel="stylesheet" href="/login/light.css" class="light-theme" disabled>
+    <link rel="stylesheet" href="/login/dark.css" class="dark-theme">
 </head>
 
 <body>
 
     <div class="flex gap-4 m-4 justify-end">
         <div class="dropdown inline-block">
-            <button class="btn btn-primary dropdown-toggle languageBtn bg-[#0d6efd]" type="button"
+            <!-- Instead of setting colour in element, set the colour in stylesheet please for theme changes -->
+            <button class="btn btn-primary dropdown-toggle languageBtn" type="button"
                 id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-language">&nbsp;</i> Languages
             </button>
@@ -42,14 +43,14 @@
         </div>
 
         <div class="dropdown inline-block">
-            <button class="btn btn-primary dropdown-toggle themeBtn bg-[#0d6efd]" type="button" id="dropdownMenuButton1"
+            <button class="btn btn-primary dropdown-toggle themeBtn" type="button" id="dropdownMenuButton2"
                 data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa-solid fa-palette">&nbsp;</i> Theme
+                <i class="fa-solid fa-palette">&nbsp;</i> Themes
             </button>
 
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li class="themeOp"><a class="dropdown-item">Dark</a></li>
-                <li class="themeOp"><a class="dropdown-item">Light</a></li>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                <li class="themeOp"><a class="dropdown-item dark" value="dark">Dark</a></li>
+                <li class="themeOp"><a class="dropdown-item light" value="light">Light</a></li>
             </ul>
         </div>
     </div>
@@ -97,10 +98,9 @@
     </div>
 </body>
 
-<!-- Import -->
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
+<!-- Import JS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/login.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/login/login.js"></script>
 
 </html>

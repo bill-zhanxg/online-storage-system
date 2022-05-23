@@ -1,9 +1,9 @@
 * {
-    color: white;
+    color: #000000;
 }
 
 body {
-    background-color: #414141;
+    background-color: #dadada;
 }
 
 .title, .button, .login i {
@@ -23,12 +23,12 @@ body {
 }
 
 .login{
-    background-color: #242424;
+    background-color: #ffffff;
 }
 
 .login input, .options a {
     background-color: #414141;
-    color: white;
+    color: #000000;
 }
 
 .error {
@@ -42,4 +42,13 @@ body {
 
 .signup a:hover {
     color: #1d83dc;
+}
+
+.languageBtn, .themeBtn {
+    background-color: #0d6efd;
+    color: black;
+}
+
+i {
+    color: white;
 }

@@ -53,3 +53,7 @@ body {
 .signup a:hover {
     color: #1d83dc;
 }
+
+.languageBtn, .themeBtn {
+    background-color: #0d6efd;
+}

@@ -86,7 +86,6 @@
 
 .login i {
     padding: 10px;
-    background: #2298ff;
     border-radius: 10px 0 0 10px;
 }
 
@@ -101,4 +100,8 @@
     padding: 24px;
     font-weight: 600;
     text-align: center;
+}
+
+.dropdown-menu {
+    padding-right: 3px !important;
 }
