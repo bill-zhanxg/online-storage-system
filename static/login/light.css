@@ -8,11 +8,11 @@ body {
 
 .title, .button, .login i {
     color: white;
-    background-color: #2298ff;
+    background-color: #4dacff;
 }
 
 .button:hover{
-    background-color: #1d87e4;
+    background-color: #359bf5;
 }
 
 .button:active {
@@ -28,9 +28,10 @@ body {
 }
 
 .login input, .options a {
-    background-color: #DEDEDE;
+    background-color: #dedede;
     color: #000000;
     transition-duration: 150ms;
+    transition: color 0.5s ease;
 }
 
 .login input:hover {
@@ -39,7 +40,6 @@ body {
 
 .login input:focus {
     outline: none;
-
 }
 
 .error {
@@ -56,8 +56,9 @@ body {
 }
 
 .languageBtn, .themeBtn {
-    background-color: #0d6efd;
+    background-color: #3988ff;
     color: white;
+    transition: color 0.5s ease;
 }
 
 i {

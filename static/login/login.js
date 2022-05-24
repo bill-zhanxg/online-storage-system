@@ -61,7 +61,6 @@ function updateLanguage() {
 
 function updateTheme() {
     let theme = localStorage.getItem('theme');
-    console.log(theme);
     switch (theme) {
         case 'dark':
             $('.dark-theme').removeAttr('disabled');
