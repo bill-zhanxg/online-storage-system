@@ -113,14 +113,14 @@
 
 /* For css transition */
 
-body {
+body,
+.login,
+.login input,
+.options a {
     transition: background-color 0.5s ease;
 }
 
-.login{
-    transition: background-color 0.5s ease;
-}
-
-.login input, .options a {
-    transition: background-color 0.5s ease;
+.login input,
+.options a {
+    transition: color 0.5s ease;
 }
