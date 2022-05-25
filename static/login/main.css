@@ -104,7 +104,8 @@
 }
 
 .dropdown-menu {
-    padding-right: 3px !important;
+    padding-right: 3px;
+    animation: block 0.5s;
 }
 
 .dropdown-item:hover {
@@ -123,4 +124,18 @@ body,
 .login input,
 .options a {
     transition: color 0.5s ease;
+}
+
+/* Animation */
+
+@keyframes block {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(40px);
+    }
 }

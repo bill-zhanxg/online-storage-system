@@ -2,7 +2,6 @@ let languages;
 
 // Do stuffs when page loads
 $(window).on('load', () => {
-    updateTheme();
     fetch('/login/language.json').then(res => res.json()).then(json => {
         languages = json;
         updateLanguage();
@@ -51,12 +50,28 @@ function updateLanguage() {
     $('.themeBtn').get(0).lastChild.nodeValue = language["Themes"];
     $('.dark').text(language['Dark']);
     $('.light').text(language['Light']);
+    $('.colorful').text(language['Colorful']);
+    $('.fun').text('\xa0\xa0' + language['Fun']);
     $('.title').text(language['Real Time Storage System']);
     $('.usernameInput').attr('placeholder', language['Username']);
     $('.passwordInput').attr('placeholder', language['Password']);
     $('.loginBtn').text(language['Login']);
     $('.signup').get(0).firstChild.nodeValue = language["Don't have an account?"] + ' ';
     $('.signup a').text(language['Create one']);
+    updateTheme();
+    for (let element of $('.languageOp a')) {
+        element = $(element);
+        let text = element.text();
+        if (text.charAt(0) !== '·' && text.charAt(0) !== '\xa0') {
+            text = '**' + text;
+        }
+        if (element.attr('value') === languageType) {
+            if (text.charAt(0) !== '·') element.text(`· ${text.slice(2)}`);
+        }
+        else {
+            if (text.charAt(0) !== '\xa0') element.text(`\xa0\xa0${text.slice(2)}`);
+        }
+    }
 }
 
 function updateTheme() {
@@ -64,17 +79,45 @@ function updateTheme() {
     switch (theme) {
         case 'dark':
             $('.dark-theme').removeAttr('disabled');
-            $('.light-theme').attr('disabled', '');
+            setTimeout(() => {
+                $('.light-theme').attr('disabled', '');
+                $('.colorful-theme').attr('disabled', '');
+            }, 50);
             break;
         case 'light':
             $('.light-theme').removeAttr('disabled');
-            $('.dark-theme').attr('disabled', '');
+            setTimeout(() => {
+                $('.dark-theme').attr('disabled', '');
+                $('.colorful-theme').attr('disabled', '');
+            }, 50);
             break;
-        case 'colourful':
+        case 'colorful':
+            $('.colorful-theme').removeAttr('disabled');
+            setTimeout(() => {
+                $('.dark-theme').attr('disabled', '');
+                $('.light-theme').attr('disabled', '');
+            }, 50);
             break;
         default:
             $('.dark-theme').removeAttr('disabled');
-            $('.light-theme').attr('disabled', '');
+            setTimeout(() => {
+                $('.light-theme').attr('disabled', '');
+                $('.colorful-theme').attr('disabled', '');
+            }, 50);
             break;
+    }
+    for (let element of $('.themeOp a')) {
+        element = $(element);
+        let text = element.text();
+        if (text.charAt(0) !== '·' && text.charAt(0) !== '\xa0') {
+            text = '**' + text;
+        }
+        console.log(text);
+        if (element.attr('value') === theme) {
+            if (text.charAt(0) !== '·') element.text(`· ${text.slice(2)}`);
+        }
+        else {
+            if (text.charAt(0) !== '\xa0') element.text(`\xa0\xa0${text.slice(2)}`);
+        }
     }
 }
