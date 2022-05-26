@@ -1,19 +1,23 @@
 * {
-    color: white;
+    color: #ffffff;
 }
 
 body {
-    background-color: #414141;
+    background-color: #bdc7ff;
+}
+
+.title {
+    color: #444444;
 }
 
 .title,
 .button,
 .login i {
-    background-color: #2298ff;
+    background-color: #4de6fa;
 }
 
 .button:hover {
-    background-color: #1d87e4;
+    background-color: #dd9a1d;
 }
 
 .button:active {
@@ -25,7 +29,7 @@ body {
 }
 
 .login {
-    background-color: #242424;
+    background-color: #5fffcf;
 }
 
 .login input {
