@@ -76,36 +76,71 @@ function updateLanguage() {
 
 function updateTheme() {
     let theme = localStorage.getItem('theme');
+
+    // Debug
+    // switch (theme) {
+    //     case 'dark':
+    //         $('.dark-theme').removeAttr('disabled');
+    //         setTimeout(() => {
+    //             $('.light-theme').attr('disabled', '');
+    //             $('.colorful-theme').attr('disabled', '');
+    //         }, 50);
+    //         break;
+    //     case 'light':
+    //         $('.light-theme').removeAttr('disabled');
+    //         setTimeout(() => {
+    //             $('.dark-theme').attr('disabled', '');
+    //             $('.colorful-theme').attr('disabled', '');
+    //         }, 50);
+    //         break;
+    //     case 'colorful':
+    //         $('.colorful-theme').removeAttr('disabled');
+    //         setTimeout(() => {
+    //             $('.dark-theme').attr('disabled', '');
+    //             $('.light-theme').attr('disabled', '');
+    //         }, 50);
+    //         break;
+    //     default:
+    //         $('.dark-theme').removeAttr('disabled');
+    //         setTimeout(() => {
+    //             $('.light-theme').attr('disabled', '');
+    //             $('.colorful-theme').attr('disabled', '');
+    //         }, 50);
+    //         break;
+    // }
+
+    // Release
     switch (theme) {
         case 'dark':
-            $('.dark-theme').removeAttr('disabled');
+            $('.dark-theme').removeAttr('type');
             setTimeout(() => {
-                $('.light-theme').attr('disabled', '');
-                $('.colorful-theme').attr('disabled', '');
+                $('.light-theme').attr('type', 'none');
+                $('.colorful-theme').attr('type', 'none');
             }, 50);
             break;
         case 'light':
-            $('.light-theme').removeAttr('disabled');
+            $('.light-theme').removeAttr('type');
             setTimeout(() => {
-                $('.dark-theme').attr('disabled', '');
-                $('.colorful-theme').attr('disabled', '');
+                $('.dark-theme').attr('type', 'none');
+                $('.colorful-theme').attr('type', 'none');
             }, 50);
             break;
         case 'colorful':
-            $('.colorful-theme').removeAttr('disabled');
+            $('.colorful-theme').removeAttr('type');
             setTimeout(() => {
-                $('.dark-theme').attr('disabled', '');
-                $('.light-theme').attr('disabled', '');
+                $('.dark-theme').attr('type', 'none');
+                $('.light-theme').attr('type', 'none');
             }, 50);
             break;
         default:
-            $('.dark-theme').removeAttr('disabled');
+            $('.dark-theme').removeAttr('type');
             setTimeout(() => {
-                $('.light-theme').attr('disabled', '');
-                $('.colorful-theme').attr('disabled', '');
+                $('.light-theme').attr('type', 'none');
+                $('.colorful-theme').attr('type', 'none');
             }, 50);
             break;
     }
+
     for (let element of $('.themeOp a')) {
         element = $(element);
         let text = element.text();
