@@ -52,6 +52,22 @@ app.get('/', (req, res) => {
     }
 })
 
+app.get('/sign-up', (req, res) => {
+    if (req.session.loggedin) {
+        // Output username
+        if (req.session.data.contoller) {
+            res.sendFile(path.join(__dirname + '/views/sign-up.html'));
+        }
+        else {
+            res.sendFile(path.join(__dirname + '/views/sign-up.html'));
+        }
+    }
+    else {
+        res.sendFile(path.join(__dirname + '/views/sign-up.html'));
+    }
+})
+
+
 app.get('/sign-up', function (req, res) {
     res.send('Unfinished!');
 });
