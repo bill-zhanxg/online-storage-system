@@ -16,7 +16,6 @@
     align-items: center;
 }
 
-
 .title {
     padding: 2rem 2rem;
     display: flex;
@@ -62,8 +61,9 @@
     display: flex;
     flex-direction: column;
     padding: 2rem;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
 }
-
 
 .login form {
     display: flex;
@@ -78,7 +78,8 @@
 }
 
 .login input {
-    padding: 6px;
+    padding: 8px;
+    padding-right: 100px;
 
     font-size: 16px;
     border-radius: 0 10px 10px 0;
@@ -86,7 +87,7 @@
 }
 
 .login i {
-    padding: 10px;
+    padding: 12px;
     border-radius: 10px 0 0 10px;
 }
 
@@ -138,4 +139,15 @@ body,
         opacity: 1;
         transform: translateY(40px);
     }
+}
+
+/* Responsive */
+@media only screen and (max-width: 500px) {
+    .login input {
+        padding-right: initial;
+    }
+}
+
+@media only screen and (max-width: 420px) {
+    /* Make everything shrink when resize */
 }

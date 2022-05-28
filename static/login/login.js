@@ -147,7 +147,6 @@ function updateTheme() {
         if (text.charAt(0) !== '·' && text.charAt(0) !== '\xa0') {
             text = '**' + text;
         }
-        console.log(text);
         if (element.attr('value') === theme) {
             if (text.charAt(0) !== '·') element.text(`· ${text.slice(2)}`);
         }
