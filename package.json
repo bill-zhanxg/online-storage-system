@@ -17,6 +17,7 @@
     "express-session": "^1.17.2",
     "mysql": "^2.18.1",
     "postcss": "^8.4.14",
+    "session-file-store": "^1.5.0",
     "tailwindcss": "^3.0.24",
     "underscore": "^1.13.3"
   }

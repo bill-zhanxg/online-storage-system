@@ -9,6 +9,7 @@ const fs = require('fs');
 const _ = require('underscore');
 const busboy = require('connect-busboy');
 const process = require('process');
+const FileStore = require('session-file-store')(session);
 const dir = process.cwd();
 const app = express();
 const port = 3002;
@@ -20,7 +21,8 @@ process.on('uncaughtException', (err, origin) => {
 app.use(session({
     secret: privConf.secret,
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
+    store: new FileStore(),
 }));
 
 app.use(express.json());
@@ -54,23 +56,12 @@ app.get('/', (req, res) => {
 
 app.get('/sign-up', (req, res) => {
     if (req.session.loggedin) {
-        // Output username
-        if (req.session.data.contoller) {
-            res.sendFile(path.join(__dirname + '/views/sign-up.html'));
-        }
-        else {
-            res.sendFile(path.join(__dirname + '/views/sign-up.html'));
-        }
+        res.redirect('/');
     }
     else {
         res.sendFile(path.join(__dirname + '/views/sign-up.html'));
     }
 })
-
-
-app.get('/sign-up', function (req, res) {
-    res.send('Unfinished!');
-});
 
 app.post('/auth', function (req, res) {
     // Capture the input fields
