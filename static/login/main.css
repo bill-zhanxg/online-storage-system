@@ -87,7 +87,7 @@
 }
 
 .login i {
-    padding: 12px;
+    padding: 10px;
     border-radius: 10px 0 0 10px;
 }
 
@@ -128,7 +128,6 @@ body,
 }
 
 /* Animation */
-
 @keyframes block {
     from {
         opacity: 0;
@@ -149,5 +148,9 @@ body,
 }
 
 @media only screen and (max-width: 420px) {
+    /* Make everything shrink when resize */
+}
+
+@media only screen and (max-height: 625px) {
     /* Make everything shrink when resize */
 }
