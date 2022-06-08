@@ -12,7 +12,7 @@ const process = require('process');
 const FileStore = require('session-file-store')(session);
 const dir = process.cwd();
 const app = express();
-const port = 3002;
+const port = 3001;
 
 process.on('uncaughtException', (err, origin) => {
     console.log(err);
