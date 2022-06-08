@@ -32,7 +32,8 @@ app.use(busboy({
     highWaterMark: 2 * 1024 * 1024, // Set 2MiB buffer
 }));
 
-const connection = mysql.createConnection({
+const connection = mysql.createPool({
+    connectionLimit: 10,
     host: privConf.host,
     user: privConf.user,
     password: privConf.password,
@@ -103,6 +104,9 @@ app.post('/auth', function (req, res) {
         res.end();
     }
 });
+
+// File API
+
 
 app.listen(port, () => {
     console.log('HTTP Server running on port ' + port);
