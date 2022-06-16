@@ -12,10 +12,12 @@ $(window).on('load', () => {
 // Send POST request when user click the login button
 function login() {
     $.post("/auth", { username: $('.usernameInput').val(), password: $('.passwordInput').val() }, function (data) {
-        if (!data) document.location.reload(true);
-        $('.error').text(data);
+        if (!data) return document.location.reload(true);
+        $('.login').css('paddingTop', '20px');
+        $('.error').css('display', 'block').text(data);
     }).fail(function () {
-        $('.error').text('There is an error while sending request to the server!');
+        $('.login').css('paddingTop', '20px');
+        $('.error').css('display', 'block').text('There is an error while sending request to the server!');
     });
 }
 

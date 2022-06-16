@@ -38,12 +38,7 @@ body {
     background-color: #383838;
 }
 
-.login input:focus {
-    outline: none;
-}
-
 .error {
-    display: none;
     color: red;
 }
 
