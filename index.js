@@ -8,7 +8,6 @@ const path = require('path');
 const fs = require('fs');
 const _ = require('underscore');
 const busboy = require('connect-busboy');
-const process = require('process');
 const FileStore = require('session-file-store')(session);
 const dir = process.cwd();
 const app = express();
@@ -64,7 +63,18 @@ app.get('/sign-up', (req, res) => {
     }
 })
 
-app.post('/auth', function (req, res) {
+app.use('/auth', (err, req, res, next) => {
+    if (err.type === 'entity.too.large') {
+        res.send('Too many characters!');
+        res.end();
+    }
+    else {
+        console.log(err.type);
+        next();
+    }
+})
+
+app.post('/auth', (req, res) => {
     // Capture the input fields
     let username = req.body.username;
     let password = req.body.password;
@@ -78,7 +88,7 @@ app.post('/auth', function (req, res) {
     // Ensure the input fields exists and are not empty
     if (username && password) {
         // Execute SQL query that'll select the account from the database based on the specified username and password
-        connection.query('SELECT * FROM accounts WHERE (username = ? OR email = ?) AND password = ?', [username, username, password], function (error, results, fields) {
+        let sql = connection.query(`SELECT * FROM accounts WHERE (username = ? OR email = ?) AND password = ?`, [username, username, password], function (error, results, fields) {
             // If there is an issue with the query, output the error
             if (error) {
                 send('There is an error with MySQL database, please let Bill.IHCha knows!');
@@ -111,3 +121,5 @@ app.post('/auth', function (req, res) {
 app.listen(port, () => {
     console.log('HTTP Server running on port ' + port);
 });
+
+console.log('Server started!');

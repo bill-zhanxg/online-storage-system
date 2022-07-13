@@ -91,6 +91,10 @@
     border-radius: 10px 0 0 10px;
 }
 
+.login input:focus {
+    outline: none;
+}
+
 .error {
     display: none;
     font-size: 16px;
