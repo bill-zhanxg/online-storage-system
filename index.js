@@ -32,7 +32,7 @@ app.use(busboy({
 }));
 
 const connection = mysql.createPool({
-    connectionLimit: 10,
+    // connectionLimit: 10,
     host: privConf.host,
     user: privConf.user,
     password: privConf.password,
@@ -115,8 +115,31 @@ app.post('/auth', (req, res) => {
     }
 });
 
-// File API
+// Register
+app.post('/register/create', (req, res) => {
 
+});
+
+// File API
+app.post('/files/upload', (req, res) => {
+
+});
+
+app.post('/files/delete', (req, res) => {
+
+});
+
+app.post('/files/move', (req, res) => {
+
+});
+
+app.post('/files/rename', (req, res) => {
+
+});
+
+app.post('/files/read', (req, res) => {
+
+});
 
 app.listen(port, () => {
     console.log('HTTP Server running on port ' + port);
