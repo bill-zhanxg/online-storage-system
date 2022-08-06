@@ -19,7 +19,7 @@ process.on('uncaughtException', (err, origin) => {
 
 app.use(session({
     secret: privConf.secret,
-    resave: true,
+    resave: false,
     saveUninitialized: true,
     store: new FileStore(),
 }));
@@ -121,6 +121,46 @@ app.post('/register/create', (req, res) => {
 });
 
 // File API
+function checkPath() {
+    if (!fs.existsSync('storedFiles')) fs.mkdirSync('storedFiles');
+    return path.join(__dirname, 'storedFiles');
+}
+
+app.post('/files/read', (req, res) => {
+    if (req.session.loggedin) {
+        var currentDir = checkPath();
+        var query = req.query.path || '';
+        if (query) currentDir = path.join(currentDir, query);
+        fs.readdir(currentDir, function (err, files) {
+            if (err) {
+                console.log(err);
+                res.end();
+                return;
+            }
+            var data = [];
+            files.forEach(function (file) {
+                try {
+                    var isDirectory = fs.statSync(path.join(currentDir, file)).isDirectory();
+                    if (isDirectory) {
+                        data.push({ Name: file, IsDirectory: true, Path: path.join(query, file) });
+                    }
+                    else {
+                        var ext = path.extname(file);
+                        data.push({ Name: file, Ext: ext, IsDirectory: false, Path: path.join(query, file) });
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+
+            });
+            data = _.sortBy(data, (f) => { return f.Name });
+            res.json(data);
+        });
+    } else {
+        res.json({ notloggedin: true });
+    }
+});
+
 app.post('/files/upload', (req, res) => {
 
 });
@@ -134,10 +174,6 @@ app.post('/files/move', (req, res) => {
 });
 
 app.post('/files/rename', (req, res) => {
-
-});
-
-app.post('/files/read', (req, res) => {
 
 });
 
