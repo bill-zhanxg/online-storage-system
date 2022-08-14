@@ -18,13 +18,11 @@ CREATE TABLE IF NOT EXISTS `accounts` (
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   `email` varchar(100) NOT NULL,
-  `chairo` bool NOT NULL,
-  `controller` bool NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 # Insert User into accounts
-INSERT INTO `accounts` (`username`, `password`, `email`, `chairo`, `controller`) VALUES ('username', 'password', 'email@gmail.com', true, true);
+INSERT INTO `accounts` (`username`, `password`, `email`) VALUES ('username', 'password', 'email@gmail.com');
 
 
 # Other commands:

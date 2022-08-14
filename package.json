@@ -3,22 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "start": "node .",
-    "tailwind": "npx tailwindcss -i ./static/input.css -o ./static/output.css --watch"
-  },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "autoprefixer": "^10.4.7",
+    "cheerio": "^1.0.0-rc.12",
     "connect-busboy": "^1.0.0",
-    "express": "^4.18.0",
-    "express-session": "^1.17.2",
-    "mysql": "^2.18.1",
-    "postcss": "^8.4.14",
-    "session-file-store": "^1.5.0",
-    "tailwindcss": "^3.0.24",
-    "underscore": "^1.13.3"
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "mysql": "^2.18.1"
   }
 }

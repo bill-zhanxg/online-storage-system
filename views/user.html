@@ -3,27 +3,54 @@
 
 <head>
 
-    <!-- Website Config -->
-    <title>Online Storage System</title>
-    <meta charset="UTF-8">
-    <link rel="icon" type="image/x-icon" href="icon image">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Website Config -->
+  <title>Online Storage System</title>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/x-icon" href="">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Meta Data for Discord Rich Embed -->
-    <meta content="Sign up for Online Storage System" property="og:title" />
-    <meta content="If you're have a Chairo email, you can sign up anytime using your Chairo email address. If not, ask Bill.IHCha to give you an account depends on who are you ;?" property="og:description" />
-    <meta content="https://panel.bill-zhanxg.com/sign-up" property="og:url" />
-    <meta content="picture url" property="og:image" />
-    <meta content="#0000ff" data-react-helmet="true" name="theme-color" />
-    <meta charset="UTF-8">
+  <!-- Meta Data for Discord Rich Embed -->
+  <meta content="Sign up for Online Storage System" property="og:title" />
+  <meta
+    content="If you're have a Chairo email, you can sign up anytime using your Chairo email address. If not, ask Bill.IHCha to give you an account depends on who are you ;?"
+    property="og:description" />
+  <meta content="https://panel.bill-zhanxg.com/sign-up" property="og:url" />
+  <meta content="picture url" property="og:image" />
+  <meta content="#0000ff" data-react-helmet="true" name="theme-color" />
 
-    <!-- Import -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="/sign-up.js"></script>
+  <!-- Import -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
+  <div class="p-8">
+    <!--- Buttons and Directory -->
+    <div class="flex justify-between items-center">
+      <div class="text-lg breadcrumbs">
+        <ul class="dir">
+          <input type="checkbox" class="checkbox mx-4" />
+          <li><a href="/">Home</a></li>
+        </ul>
+      </div>
+      <div class="flex justify-center items-center gap-4">
+        <button class="btn btn-primary" onclick="logout();">log out lel</button>
+        <button class="btn btn-primary">Create Folder</button>
+        <button class="btn btn-primary">New File</button>
+        <button class="btn btn-primary">Upload File</button>
+      </div>
+    </div>
+    <!-- Files -->
+    <div class="filePanel flex flex-col gap-2 my-4 text-xl">
+    </div>
+  </div>
 
 </body>
+
+<!-- Import JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/user.js"></script>
+
+</html>
