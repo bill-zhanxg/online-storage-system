@@ -25,7 +25,8 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css" />
 </head>
 
-<body>
+<body class="body">
+  <div id="info"></div>
   <div class="p-8">
     <!--- Buttons and Directory -->
     <div class="flex justify-between items-center">
@@ -37,9 +38,9 @@
       </div>
       <div class="flex justify-center items-center gap-4">
         <button class="btn btn-primary" onclick="logout();">log out lel</button>
-        <button class="btn btn-primary">Create Folder</button>
+        <button class="createFolder btn btn-primary">Create Folder</button>
         <button class="btn btn-primary">New File</button>
-        <button class="btn btn-primary">Upload File</button>
+        <button class="btn btn-primary" onclick="fileSelector()">Upload File</button>
       </div>
     </div>
     <!-- Files -->
