@@ -109,13 +109,23 @@ app.post('/account/create', (req, res) => {
 // File API
 function checkPath(id, dir, extra = []) {
     if (!fs.existsSync('storedFiles')) fs.mkdirSync('storedFiles');
-    return path.join(__dirname, 'storedFiles', id, dir, ...extra);
+    let userPath = path.join('storedFiles', `${id}`);
+    if (!fs.existsSync(userPath)) fs.mkdirSync(userPath);
+    dir = dir || '';
+    let unsafePath = path.join(dir, ...extra);
+    while (true) {
+        let check = unsafePath.indexOf('..\\');
+        if (check !== -1) unsafePath = unsafePath.slice(0, check) + unsafePath.slice(check + 3);
+        else break;
+    }
+    let finalPath = path.join(__dirname, userPath, unsafePath);
+    return finalPath;
 }
 
 app.get('*', async (req, res) => {
     if (!req.session.loggedin) return res.sendFile(path.join(__dirname + '/views/login.html'));
 
-    let userId = `${req.session.data.id}`;
+    let userId = req.session.data.id;
     let dir = req.params[0];
 
     if (!fs.existsSync(checkPath(userId, dir))) return res.sendFile(path.join(__dirname + '/views/not-found.html'));
@@ -191,7 +201,7 @@ app.use('*', (req, res, next) => {
 app.post('/folder/create', (req, res) => {
     let folderPath = req.body.path;
     if (!folderPath) return res.code(400);
-    folderPath = checkPath(`${req.session.data.id}`, folderPath);
+    folderPath = checkPath(req.session.data.id, folderPath);
     if (fs.existsSync(folderPath)) return res.code(405);
     fs.mkdir(folderPath, err => {
         if (err) return res.code(500);
@@ -202,34 +212,42 @@ app.post('/folder/create', (req, res) => {
 app.post('/files/upload', (req, res) => {
     req.pipe(req.busboy); // Pipe it trough busboy
 
-    req.busboy.on('field', function (key, value) {
+    req.busboy.on('field', (key, value) => {
         req.body[key] = value;
     });
 
-    // let name = tmp.tmpNameSync();
-    // let stream = fs.createWriteStream(name);
+    let files = [];
+    let streams = [];
+
     req.busboy.on('file', (fieldname, file, info) => {
-        console.log(req.body);
+        let path = req.body.path;
+        if (path === undefined) return res.code(400);
+        let name = info.filename || 'New file';
+        let filePath = checkPath(req.session.data.id, path, [name]);
+        files.push(filePath);
+        let stream = fs.createWriteStream(filePath);
+        streams.push(stream);
         // Pipe it trough
-        // file.pipe(stream);
-        // console.log(info);
+        file.pipe(stream);
+    });
+
+    req.socket.on('error', () => {
+        streams.forEach(stream => stream.end());
+        for (let file of files) fs.unlink(file, () => { });
+        res.code(500);
     });
 
     req.busboy.on('finish', () => {
-        // try {
-        //     stream.end();
-        //     let dir = path.join(checkPath(), `${req.body.path}/${req.body.name}`);
-        //     fs.copyFile(name, dir, () => {
-        //         fs.unlink(name, () => { });
-        //         res.json({ success: true });
-        //     });
-        // }
-        // catch {
-        //     fs.unlink(name, () => { });
-        //     res.json({ success: false });
-        // }
-        res.end();
-        console.log(req.body);
+        streams.forEach(stream => stream.end());
+        res.code(200);
+    });
+});
+
+app.delete('/files/delete', (req, res) => {
+    console.log(checkPath(req.session.data.id, req.body.path));
+    fs.rm(checkPath(req.session.data.id, req.body.path), { recursive: true }, err => {
+        if (err) return res.code(500);
+        res.code(200);
     });
 });
 
@@ -253,14 +271,6 @@ app.patch('/files/update', (req, res) => {
         if (err) return res.json({ success: false });
         return res.json({ success: true });
     })
-});
-
-app.delete('/files/delete', (req, res) => {
-    let dir = path.join(checkPath(), req.body.path);
-    fs.rm(dir, { recursive: true }, (err) => {
-        if (err) return res.json({ success: false });
-        return res.json({ success: true });
-    });
 });
 
 app.listen(port, () => {

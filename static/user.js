@@ -1,3 +1,5 @@
+let currentPath = $('body').attr('currentPath') || '';
+
 function logout() {
     $.post("/auth/logout", () => document.location.reload(true)).fail(() => alert('There is an error logging out!'));
 }
@@ -7,9 +9,7 @@ $('.noneClick').on('click', event => event.stopPropagation());
 function closeDropDown(event) {
     let targetEl = event.currentTarget;
     if (targetEl && targetEl.matches(':focus')) {
-        setTimeout(function () {
-            targetEl.blur();
-        }, 0);
+        setTimeout(() => targetEl.blur(), 0);
     }
 }
 
@@ -18,7 +18,6 @@ function intoDir(folderName) {
 }
 
 function createFolder() {
-    let currentPath = $('body').attr('currentPath') || '';
     newFolder(`${currentPath}/test`);
 }
 
@@ -27,9 +26,13 @@ function fileSelector() {
     input.type = 'file';
     input.multiple = true;
     input.onchange = e => {
-        uploadFile($('body').attr('currentPath') || '', e.target.files);
+        uploadFile(currentPath, e.target.files);
     }
     input.click();
+}
+
+function testDelete() {
+    deleteFile(`${currentPath}/test`);
 }
 
 function newFolder(path) {
@@ -51,7 +54,7 @@ function newFolder(path) {
 
 function uploadFile(path, files) {
     let data = new FormData();
-    data.append('path', path)
+    data.append('path', path);
     for (let file of files) {
         console.log(file);
         data.append('file', file);
@@ -78,11 +81,13 @@ function uploadFile(path, files) {
         statusCode: {
             401: () => {
                 alert('Error uploading file: you\'re not logged in!');
-                location.reload(true);
+            },
+            500: () => {
+                alert('Unable to uploade this file: Server error occurred!');
             },
         },
-        success: result => {
-            // location.reload(true);
+        complete: () => {
+            location.reload(true);
         }
     });
 }
@@ -95,27 +100,28 @@ function updateFile(prevLocation, location) {
         statusCode: {
             401: () => {
                 alert('Error moving/renaming file: you\'re not logged in!');
-                location.reload(true);
             },
         },
-        success: result => {
+        complete: () => {
             location.reload(true);
         }
     });
 }
 
-function deleteFile(file) {
+function deleteFile(path) {
     $.ajax({
         url: '/files/delete',
         method: 'DELETE',
-        data: { file: file },
+        data: { path: path },
         statusCode: {
             401: () => {
                 alert('Error deleting file: you\'re not logged in!');
-                location.reload(true);
+            },
+            500: () => {
+                alert('Unable to delete this file: Server error occurred!');
             },
         },
-        success: result => {
+        complete: () => {
             location.reload(true);
         }
     });
