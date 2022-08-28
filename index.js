@@ -123,72 +123,87 @@ function checkPath(id, dir, extra = []) {
 }
 
 app.get('*', async (req, res) => {
-    if (!req.session.loggedin) return res.sendFile(path.join(__dirname + '/views/login.html'));
+    let file = req.query.file ? true : false;
+    if (!req.session.loggedin) return file ? res.status(401).end() : res.sendFile(path.join(__dirname + '/views/login.html'));
 
     let userId = req.session.data.id;
     let dir = req.params[0];
-
-    if (!fs.existsSync(checkPath(userId, dir))) return res.sendFile(path.join(__dirname + '/views/not-found.html'));
-    let $ = cheerio.load(await fs.promises.readFile(path.join(__dirname + '/views/user.html')));
-
+    
     let folders = [];
     for (let folder of dir.split('/')) {
         if (!folder.trim()) continue;
         folders.push(folder);
-        if (folder.trim()) $('.dir').append(`<li><a href="/${folders.join('/')}">${folder}</a></li>`);
     }
     let currentPath = folders.length > 0 ? `/${folders.join('/')}` : ''
 
-    if ((await fs.promises.stat(checkPath(userId, dir))).isDirectory()) {
-        fs.readdir(checkPath(userId, dir), async (err, files) => {
-            if (err) {
-                // Return error element
-                console.log(err)
-            }
-            else {
-                function appendElement(filename, size, time, icon) {
-                    $('.filePanel').append(`<div class="fileitem cursor-pointer flex justify-between items-center bg-base-200 border-[2px] border-base-300 px-4 py-2 rounded-xl" onclick="intoDir('${currentPath}/${filename}');">
-
-                    <div class="flex basis-1/2 justify-start items-center gap-4">
-                      <input type="checkbox" class="noneClick checkbox checkitem" />
-                      <p class="foldername"><i class="fa-solid fa-${icon} pr-2"></i>${filename}</p>
-                    </div>
-            
-                    <div class="flex basis-1/2 justify-between items-center gap-4 lg:gap-8">
-                      <p>${size}</p>
-                      <p>${time}</p>
-                      <div class="noneClick dropdown dropdown-end">
-                        <label tabindex="0" class="btn btn-info m-1" id="dropdown" onmousedown="closeDropDown(event)"><i class="fa-solid fa-ellipsis-vertical"></i></label>
-                        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-300 rounded-box w-52" id="dropdown-menu">
-                          <li><a>Do something</a></li>
-                          <li><a>Do something too</a></li>
-                          <li><a class="bg-red-500 text-base-300">just don't press it.</a></li>
-                        </ul>
-                      </div>
-                    </div>
-            
-                  </div>`)
+    if (file) {
+        if (!fs.existsSync(checkPath(userId, dir))) return res.sendFile(path.join(__dirname + '/views/not-found.html'));
+        let $ = cheerio.load('<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css"><link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" /><link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css" /><div class="filePanel flex flex-col gap-2 mx-8 text-xl"></div><script src="https://code.jquery.com/jquery-3.6.0.min.js"></script><script src="/fileIframe.js"></script>');
+    
+        if ((await fs.promises.stat(checkPath(userId, dir))).isDirectory()) {
+            fs.readdir(checkPath(userId, dir), async (err, files) => {
+                if (err) {
+                    // Return error element
+                    console.log(err)
                 }
-                for (let file of files) {
-                    let stat = await fs.promises.stat(checkPath(userId, dir, [file]));
-                    let size = stat.size;
-                    if (size < 1000) size = `${size} Byte${size > 1 ? 's' : ''}`;
-                    else if (size < 1000000) size = `${Math.round(size / 1000)} KB`;
-                    else if (size < 1.0000E+9) size = `${Math.round(size / 1000000)} MB`;
-                    else if (size < 1.0000E+12) size = `${Math.round(size / 1.0000E+9)} GB`;
-                    else size = `${Math.round(size / 1.0000E+12)} TB`;
-                    appendElement(file, size, 'today', stat.isDirectory() ? 'folder' : iconMapping[path.extname(file).slice(1)] || 'file');
+                else {
+                    function appendElement(filename, size, time, icon) {
+                        $('.filePanel').append(`
+                        <div draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="event.preventDefault()" onclick="intoDir('${currentPath}/${filename}');" class="fileitem cursor-pointer flex justify-between items-center bg-base-200 border-[2px] border-base-300 px-4 py-2 rounded-xl">
+    
+                            <div class="flex justify-start items-center gap-4">
+                                <input type="checkbox" class="noneClick checkbox checkitem" />
+                                <p class="foldername"><i class="fa-solid fa-${icon} pr-2"></i>${filename}</p>
+                            </div>
+                
+                            <div class="flex justify-between items-center gap-4 lg:gap-8">
+                                <p>${size}</p>
+                                <p>${time}</p>
+                                <div class="noneClick dropdown dropdown-end dropdown-top">
+                                    <label tabindex="0" class="btn btn-info m-1" id="dropdown" onmousedown="closeDropDown(event)"><i class="fa-solid fa-ellipsis-vertical"></i></label>
+                                    <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-300 rounded-box w-52" id="dropdown-menu">
+                                        <li><a>Do something</a></li>
+                                        <li><a>Do something too</a></li>
+                                        <li><a class="bg-red-500 text-base-300">just don't press it.</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                
+                         </div>`)
+                    }
+                    for (let file of files) {
+                        let stat = await fs.promises.stat(checkPath(userId, dir, [file]));
+                        let size = stat.size;
+                        if (size < 1000) size = `${size} Byte${size > 1 ? 's' : ''}`;
+                        else if (size < 1000000) size = `${Math.round(size / 1000)} KB`;
+                        else if (size < 1.0000E+9) size = `${Math.round(size / 1000000)} MB`;
+                        else if (size < 1.0000E+12) size = `${Math.round(size / 1.0000E+9)} GB`;
+                        else size = `${Math.round(size / 1.0000E+12)} TB`;
+                        appendElement(file, size, 'today', stat.isDirectory() ? 'folder' : iconMapping[path.extname(file).slice(1)] || 'file');
+                    }
+                    if (files.length < 1) $('.filePanel').append('<h1 class="px-14">There is nothing here! Click "Create Folder" to create a folder!</h1>')
+                    $('.createFolder').attr('onclick', `createFolder()`);
+                    $('body').attr('currentPath', currentPath);
+                    res.send($.html());
                 }
-                if (files.length < 1) $('.filePanel').append('<h1 class="px-14">There is nothing here! Click "Create Folder" to create a folder!</h1>')
-                $('.createFolder').attr('onclick', `createFolder()`);
-                $('body').attr('currentPath', currentPath);
-                res.send($.html());
-            }
-        })
+            })
+        }
+        else {
+            // File
+            res.sendFile(checkPath(userId, dir));
+        }
     }
     else {
-        // File
-        res.sendFile(checkPath(userId, dir));
+        let $ = cheerio.load(await fs.promises.readFile(path.join(__dirname + '/views/user.html')));
+    
+        let append = [];
+        for (let folder of folders) {
+            append.push(folder);
+            $('.dir').append(`<li><a onclick="handleDir('/${append.join('/')}')">${folder}</a></li>`);
+        }
+        $('body').attr('currentPath', currentPath);
+        $('.files').attr('src', `${currentPath ? currentPath : '/'}?file=true`);
+        res.send($.html());
     }
 });
 

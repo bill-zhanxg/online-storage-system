@@ -39,34 +39,38 @@
   </label>
   <div class="p-8 pb-4">
     <!--- Buttons and Directory -->
-    <div class="flex justify-between items-center">
-      <div class="text-lg breadcrumbs">
+    <div class="flex lg:flex-row flex-col justify-start lg:justify-between items-center ">
+      <div class="hidden lg:block text-lg breadcrumbs">
         <ul class="dir">
           <input type="checkbox" class="checkbox mx-4" />
           <li><a onclick="handleDir('/')">Home</a></li>
         </ul>
       </div>
-      <div class="flex justify-center items-center gap-4">
+      <div class="flex justify-center items-center gap-4 flex-wrap">
         <div class="uploadDiv hidden tooltip" data-tip="100% Complete">
           <button class="upload-progress radial-progress" style="--value:100;--size:3rem">☁</button>
         </div>
-        <button class="btn btn-primary" onclick="logout();">log out lel</button>
-        <button class="createFolder btn btn-primary">Create Folder</button>
-        <label for="create-file-modal" class="btn btn-primary modal-button">New File</label>
-        <button class="btn btn-primary" onclick="fileSelector()">Upload File</button>
+        <button class="btn btn-primary lg:w-auto w-full" onclick="logout();">log out lel</button>
+        <button class="createFolder btn btn-primary  lg:w-auto w-full">Create Folder</button>
+        <label for="create-file-modal" class="btn btn-primary modal-button  lg:w-auto w-full">New File</label>
+        <button class="btn btn-primary  lg:w-auto w-full" onclick="fileSelector()">Upload File</button>
+      </div>
+      <div class="block lg:hidden text-lg breadcrumbs place-self-start  mt-4">
+        <ul class="dir">
+          <input type="checkbox" class="checkbox mx-4"/>
+          <li><a onclick="handleDir('/')">Home</a></li>
+        </ul>
       </div>
     </div>
     <!-- Files -->
     
   </div>
-  <progress class="loading progress flex flex-col gap-2 mx-8 w-11/12"></progress>
-  <iframe class="files absolute" hidden src="/?file=true" height="86.6%" width="100%"></iframe>
-
+  <iframe class="files flex flex-col gap-2 text-xl absolute h-[90vh] w-[100vh]" loading="lazy" src="/?file=true" height="100%" width="100%">  </iframe>
 </body>
 
 <!-- Import JS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script> -->
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
 <script src="/user.js"></script>
 
 </html>

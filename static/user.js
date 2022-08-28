@@ -1,20 +1,43 @@
-let currentPath = $('body').attr('currentPath') || '';
+let currentPath = $('body').attr('currentPath') || '/';
+const progress = [];
+
+$('.files').on('load', () => {
+    $('.loading').hide();
+    $('.files').show();
+});
+
+function hideProgressBar() {
+    $('.files').hide();
+    $('.loading').show();
+}
 
 function logout() {
     $.post("/auth/logout", () => document.location.reload(true)).fail(() => alert('There is an error logging out!'));
 }
 
-$('.noneClick').on('click', event => event.stopPropagation());
-
-function closeDropDown(event) {
-    let targetEl = event.currentTarget;
-    if (targetEl && targetEl.matches(':focus')) {
-        setTimeout(() => targetEl.blur(), 0);
-    }
+window.parent.onmessage = event => {
+    if (typeof (event.data) !== 'string') return;
+    currentPath = event.data;
+    hideProgressBar();
+    $('.files').attr('src', event.data + '?file=true');
+    $('.dir').append(`<li><a onclick="handleDir('${currentPath}')">${currentPath.split('/').pop()}</a></li>`)
 }
 
-function intoDir(folderName) {
-    window.location = `${folderName}`;
+function handleDir(dir) {
+    currentPath = dir;
+    top.history.pushState(null, null, currentPath);
+    hideProgressBar();
+    $('.files').attr('src', currentPath + '?file=true');
+    let dirE = $('.dir');
+    dirE.empty();
+    dirE.append('<input type="checkbox" class="checkbox mx-4" />');
+    dirE.append('<li><a onclick="handleDir(\'/\')">Home</a></li>');
+    let folders = [];
+    for (let folder of currentPath.split('/')) {
+        if (!folder.trim()) continue;
+        folders.push(folder);
+        dirE.append(`<li><a onclick="handleDir(\'/${folders.join('/')}\')">${folder}</a></li>`)
+    }
 }
 
 function createFolder() {
@@ -52,6 +75,15 @@ function newFolder(path) {
     });
 }
 
+function updateProgress() {
+    let progressBar = $('.uploadDiv');
+    if (progress.length === 0) return progressBar.addClass('hidden');
+    if (progressBar.hasClass('hidden')) progressBar.removeClass('hidden');
+    const percent = Math.round(progress.reduce((a, b) => a + b, 0) * 100 / progress.length);
+    progressBar.attr('data-tip', `${percent}% Complete`);
+    $('.upload-progress').css('--value', `${percent}`);
+}
+
 function uploadFile(path, files) {
     let data = new FormData();
     data.append('path', path);
@@ -60,15 +92,17 @@ function uploadFile(path, files) {
         data.append('file', file);
     }
 
+    let arrayIndex = progress.length;
+    progress[arrayIndex] = 0;
+
     $.ajax({
         xhr: function () {
             var xhr = new XMLHttpRequest();
             //Upload progress
             xhr.upload.addEventListener("progress", event => {
                 if (event.lengthComputable) {
-                    var percentComplete = event.loaded / event.total;
-                    //Do something with upload progress
-                    console.log(percentComplete);
+                    progress[arrayIndex] = event.loaded / event.total;
+                    updateProgress();
                 }
             }, false);
             return xhr;
@@ -88,6 +122,10 @@ function uploadFile(path, files) {
         },
         complete: () => {
             location.reload(true);
+        },
+        finally: () => {
+            progress.splice(arrayIndex, 1);
+            updateProgress();
         }
     });
 }
