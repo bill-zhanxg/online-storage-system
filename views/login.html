@@ -1,72 +1,72 @@
 <!DOCTYPE html>
 
-    <head>
-        <!-- Website Config -->
-        <title>Online Storage System</title>
-        <meta charset="UTF-8">
-        <link rel="icon" type="image/x-icon" href="">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+    <!-- Website Config -->
+    <title>Online Storage System</title>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <!-- Meta Data for Discord Rich Embed -->
-        <meta content="Online Storage System" property="og:title" />
-        <meta content="" property="og:description" />
-        <meta content="https://storage.bill-zhanxg.com" property="og:url" />
-        <meta content="picture url" property="og:image" />
-        <meta content="#0000ff" data-react-helmet="true" name="theme-color" />
-        <meta charset="UTF-8">
+    <!-- Meta Data for Discord Rich Embed -->
+    <meta content="Online Storage System" property="og:title" />
+    <meta content="" property="og:description" />
+    <meta content="https://storage.bill-zhanxg.com" property="og:url" />
+    <meta content="picture url" property="og:image" />
+    <meta content="#0000ff" data-react-helmet="true" name="theme-color" />
+    <meta charset="UTF-8">
 
-        <!-- Import CSS -->
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
-        <style>
-            ::-ms-reveal, ::-ms-clear {
-                display: none;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="flex justify-center items-center h-[100vh]">
-            <div class="bg-base-200 rounded-xl p-12">
-                <div class="flex flex-col gap-6">
-                    <h1 class="text-4xl font-bold text-center">Online Storage System</h1>
-    
-                    <div class="flex flex-col gap-4">
-                        <div class="form-control w-full max-w-xl">
-                            <div class="input-group">
-                                <span><i class="fa-solid fa-user p-2"></i></span>
-                                <input
-                                    type="text"
-                                    placeholder="Enter Username"
-                                    class="usernameInput input input-lg input-bordered w-full max-w-md"
-                                />
-                            </div>
-                        </div>
-                        <div class="form-control w-full max-w-xl">
-                            <div class="input-group">
-                                <span><i class="fa-solid fa-key p-[0.45rem]"></i></span>
-                                <input
-                                    type="password"
-                                    placeholder="Enter Password"
-                                    class="passwordInput input input-lg input-bordered w-full max-w-md"
-                                />
-                            </div>
+    <!-- Import CSS -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
+    <style>
+        ::-ms-reveal,
+        ::-ms-clear {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="flex justify-center items-center h-[100vh]">
+        <div class="bg-base-200 rounded-xl p-12">
+            <div class="flex flex-col gap-6">
+                <h1 class="text-4xl font-bold text-center">Online Storage System</h1>
+
+                <div class="flex flex-col gap-4">
+                    <div class="form-control w-full max-w-xl">
+                        <div class="input-group">
+                            <span><i class="fa-solid fa-envelope p-2"></i></span>
+                            <input type="text" placeholder="Enter Email Address"
+                                class="usernameInput input input-lg input-bordered w-full max-w-md" />
                         </div>
                     </div>
-    
-                    <div class="text-lg">
-                        Don't have an account? <a href="/signup" class="link link-primary">Create One!</a> 
+                    <div class="form-control w-full max-w-xl">
+                        <div class="input-group">
+                            <span><i class="fa-solid fa-key p-[0.45rem]"></i></span>
+                            <input type="password" placeholder="Enter Password"
+                                class="passwordInput input input-lg input-bordered w-full max-w-md" />
+                        </div>
                     </div>
-    
-                    <button class="btn btn-lg btn-primary" onclick="login()">
-                        Login
-                    </button>
                 </div>
+
+                <div class="my-[-1rem] text-error hidden">
+                    <b class="text-error">Error: Username Invalid / Taken</b>
+                </div>
+
+                <div class="text-lg">
+                    Don't have an account? <a href="/signup" class="link link-primary">Create One!</a>
+                </div>
+
+                <button class="btn btn-lg btn-primary" onclick="login()">
+                    Login
+                </button>
             </div>
         </div>
+    </div>
 
-    </body>
+</body>
 
 <!-- Import JS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

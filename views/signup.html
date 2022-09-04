@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<head>
+    <!-- Website Config -->
+    <title>Online Storage System</title>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Meta Data for Discord Rich Embed -->
+    <meta content="Online Storage System" property="og:title" />
+    <meta content="" property="og:description" />
+    <meta content="https://storage.bill-zhanxg.com" property="og:url" />
+    <meta content="picture url" property="og:image" />
+    <meta content="#0000ff" data-react-helmet="true" name="theme-color" />
+    <meta charset="UTF-8">
+
+    <!-- Import CSS -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div class="flex justify-center items-center h-[100vh]">
+        <div class="bg-base-200 rounded-xl p-12">
+            <div class="flex flex-col gap-6 my-[-1rem]">
+                <h1 class="text-4xl font-bold text-center">Online Storage System</h1>
+
+                <div class="flex flex-col gap-4 relative">
+                    <div class="form-control w-full max-w-xl">
+                        <div class="input-group">
+                            <span><i class="fa-solid fa-envelope p-[0.45rem]"></i></span>
+                            <input type="text" placeholder="You Email"
+                                class="input input-lg input-bordered w-full max-w-md" />
+                            <span>@chairo.vic.edu.au</span>
+                        </div>
+                    </div>
+                    <div class="form-control w-full max-w-xl">
+                        <div class="input-group">
+                            <span><i class="fa-solid fa-key p-[0.45rem]"></i></span>
+                            <input type="password" placeholder="Your Password"
+                                class="input input-lg input-bordered w-full max-w-md pr-12" />
+                        </div>
+                    </div>
+
+                    <label for="password-info" class="model-button absolute bottom-[15%] right-[5%]">
+                        <i class="fa-solid cursor-pointer fa-circle-info"></i>
+                    </label>
+                </div>
+
+                <div class="my-[-1rem] text-error hidden">
+                    <b class="text-error">Error: Username Invalid / Taken</b>
+                </div>
+
+                <div class="text-lg">
+                    Don't have an account? <a href="/" class="link link-primary">Login now!</a>
+                </div>
+
+                <!-- Password Info -->
+                <input type="checkbox" id="password-info" class="modal-toggle" />
+                <div class="modal">
+                    <div class="modal-box">
+                        <h3 class="font-bold text-lg">Passsword Requirment</h3>
+                        <p class="py-4">something la idk what do put</p>
+                        <div class="modal-action">
+                            <label for="password-info" class="btn w-full">Got it!</label>
+                        </div>
+                    </div>
+                </div>
+
+                <label class="btn btn-lg btn-primary model-button" for="signup-info">
+                    Sign Up
+                </label>
+
+                <input type="checkbox" id="signup-info" class="modal-toggle" />
+                <div class="modal">
+                    <div class="modal-box">
+                        <h3 class="font-bold text-lg">Passsword Requirment</h3>
+                        <p class="py-4">something la idk what do put</p>
+                        <div class="flex flex-row modal-action">
+                            <label for="signup-info" class="btn">Cancel</label>
+                            <label for="register" class="btn">Continue</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<!-- Import JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/sign-up.js"></script>
+
+
+</html>

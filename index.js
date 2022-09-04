@@ -40,7 +40,7 @@ app.get('/signup', (req, res) => {
         res.redirect('/');
     }
     else {
-        res.sendFile(path.join(__dirname + '/views/sign-up.html'));
+        res.sendFile(path.join(__dirname + '/views/signup.html'));
     }
 })
 
