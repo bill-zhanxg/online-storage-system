@@ -7,6 +7,7 @@
     <link rel="icon" type="image/x-icon" href="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <noscript>Please enable Javascript for this page to work!</noscript>
 
     <!-- Meta Data for Discord Rich Embed -->
     <meta content="Online Storage System" property="og:title" />
@@ -17,8 +18,8 @@
     <meta charset="UTF-8">
 
     <!-- Import CSS -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
     <link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
     <style>
         ::-ms-reveal,
@@ -51,8 +52,9 @@
                     </div>
                 </div>
 
-                <div class="my-[-1rem] text-error hidden">
-                    <b class="text-error">Error: Username Invalid / Taken</b>
+                <!-- TODO: fix overflow problem -->
+                <div class="error my-[-1rem] text-error hidden">
+                    <b class="error-text text-error"></b>
                 </div>
 
                 <div class="text-lg">

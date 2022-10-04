@@ -1,72 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<!-- Website Config -->
+		<title>Online Storage System</title>
+		<meta charset="UTF-8" />
+		<link rel="icon" type="image/x-icon" href="" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<noscript>Please enable Javascript for this page to work!</noscript>
 
-<head>
+		<!-- Meta Data for Discord Rich Embed -->
+		<meta content="Sign up for Online Storage System" property="og:title" />
+		<meta
+			content="If you're have a Chairo email, you can sign up anytime using your Chairo email address. If not, ask Bill.IHCha to give you an account depends on who are you ;?"
+			property="og:description"
+		/>
+		<meta content="https://panel.bill-zhanxg.com/sign-up" property="og:url" />
+		<meta content="picture url" property="og:image" />
 
-  <!-- Website Config -->
-  <title>Online Storage System</title>
-  <meta charset="UTF-8">
-  <link rel="icon" type="image/x-icon" href="">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<!-- Imports -->
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
+		<link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
+	</head>
 
-  <!-- Meta Data for Discord Rich Embed -->
-  <meta content="Sign up for Online Storage System" property="og:title" />
-  <meta
-    content="If you're have a Chairo email, you can sign up anytime using your Chairo email address. If not, ask Bill.IHCha to give you an account depends on who are you ;?"
-    property="og:description" />
-  <meta content="https://panel.bill-zhanxg.com/sign-up" property="og:url" />
-  <meta content="picture url" property="og:image" />
-  <meta content="#0000ff" data-react-helmet="true" name="theme-color" />
+	<body class="body">
+		<input type="checkbox" id="create-folder-modal" class="modal-toggle" />
+		<label for="create-folder-modal" class="foldermodal modal cursor-pointer">
+			<label class="modal-box relative">
+				<h3 class="font-bold text-lg py-4">New Folder</h3>
+				<b class="create-folder-error text-error"></b>
+				<input
+					type="text"
+					placeholder="Folder name"
+					class="foldername input input-bordered w-full max-w-xl"
+					value="New folder"
+					onkeypress="if (event.keyCode == 13) { newFolder(); }"
+				/>
+				<div class="modal-action">
+					<label class="btn w-full" onclick="newFolder();">Create Folder</label>
+				</div>
+			</label>
+		</label>
 
-  <!-- Import -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css">
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css" />
-</head>
+		<input type="checkbox" id="create-file-modal" class="modal-toggle" />
+		<label for="create-file-modal" class="modal cursor-pointer">
+			<label class="modal-box relative">
+				<h3 class="font-bold text-lg py-4">New File</h3>
+				<b class="create-file-error text-error"></b>
+				<input
+					type="text"
+					placeholder="File name"
+					class="filename input input-bordered w-full max-w-xl"
+					value="New Text Document.txt"
+					onkeypress="if (event.keyCode == 13) { emptyFile(); }"
+				/>
+				<div class="modal-action">
+					<label class="btn w-full" onclick="emptyFile();">Create File</label>
+				</div>
+			</label>
+		</label>
 
-<body class="body">
+		<input type="checkbox" id="upload-files-modal" class="modal-toggle" />
+		<label for="upload-files-modal" class="modal cursor-pointer">
+			<label class="modal-box relative w-11/12 max-w-5xl">
+				<h3 class="font-bold text-lg py-4">File Uploads</h3>
+				<div class="uploadList flex flex-col gap-2 text-xl"></div>
+				<div class="modal-action">
+					<label class="btn btn-error w-full" onclick="emptyUploads()">Clear Queue</label>
+				</div>
+			</label>
+		</label>
 
-  <input type="checkbox" id="create-file-modal" class="modal-toggle" />
-  <label for="create-file-modal" class="modal cursor-pointer">
-    <label class="modal-box relative" for="">
-      <h3 class="font-bold text-lg py-4">New File</h3>
-      <input type="text" placeholder="Type here" class="input input-bordered w-full max-w-xl" />
-      <div class="modal-action">
-        <label for="create-file-modal" class="btn w-full">Create File</label>
-      </div>
-    </label>
-  </label>
-  <div class="p-8 pb-4">
-    <!--- Buttons and Directory -->
-    <div class="flex justify-between items-center">
-      <div class="text-lg breadcrumbs">
-        <ul class="dir">
-          <input type="checkbox" class="checkbox mx-4" />
-          <li><a onclick="handleDir('/')">Home</a></li>
-        </ul>
-      </div>
-      <div class="flex justify-center items-center gap-4">
-        <div class="uploadDiv hidden tooltip" data-tip="100% Complete">
-          <button class="upload-progress radial-progress" style="--value:100;--size:3rem">☁</button>
-        </div>
-        <button class="btn btn-primary" onclick="logout();">log out lel</button>
-        <button class="createFolder btn btn-primary">Create Folder</button>
-        <label for="create-file-modal" class="btn btn-primary modal-button">New File</label>
-        <button class="btn btn-primary" onclick="fileSelector()">Upload File</button>
-      </div>
-    </div>
-    <!-- Files -->
-    
-  </div>
-  <progress class="loading progress flex flex-col gap-2 mx-8 w-11/12"></progress>
-  <iframe class="files absolute" hidden src="/?file=true" height="86.6%" width="100%"></iframe>
+		<div class="p-8 pb-4">
+			<div class="flex flex-col md:flex-row md:gap-4 md:justify-between md:items-center">
+				<div class="text-lg breadcrumbs" style="overflow-x: overlay">
+					<ul class="dir mb-2">
+						<input
+							title="breadcrumbs"
+							type="checkbox"
+							class="checkAll checkbox mx-4"
+							onchange="checkAllChanged(event)"
+						/>
+						<li><a onclick="handleDir('/')" ondrop="drop(event, '')" ondragover="dragover(event)">Home</a></li>
+					</ul>
+				</div>
+				<div class="flex items-center gap-4 md:gap-1 w-auto">
+					<label class="uploadDiv hidden btn btn-ghost tooltip" data-tip="100% Complete" for="upload-files-modal">
+						<label
+							class="upload-progress cursor-pointer radial-progress mt-[3px]"
+							style="--value: 100; --size: 2.5rem"
+							for="upload-files-modal"
+							>☁</label
+						>
+					</label>
+					<div class="flex items-center gap-4 md:gap-2 md:mr-5 w-full">
+						<label class="flex-1 btn btn-primary" onclick="logout();">log out lel</label>
+						<label class="flex-1 btn btn-primary modal-button" for="create-folder-modal">Create Folder</label>
+						<label class="flex-1 btn btn-primary modal-button" for="create-file-modal">New File</label>
+						<label class="flex-1 btn btn-primary" onclick="fileSelector()">Upload File</label>
+					</div>
+				</div>
+			</div>
+		</div>
 
-</body>
+		<progress class="loading progress flex flex-col gap-2 mx-auto w-11/12"></progress>
+		<div class="filesParent hidden absolute h-[78.8%] md:h-[84%] w-[150%] md:w-[100%]">
+			<iframe class="files" src="/?file=true" width="100%" height="100%"></iframe>
+		</div>
+	</body>
 
-<!-- Import JS -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script> -->
-<script src="/user.js"></script>
-
+	<!-- Import JS -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="/user.js"></script>
 </html>
+
+// TODO: Add account menu and make sure to add admin control panel which allows me to create new accounts manually

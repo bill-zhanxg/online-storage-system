@@ -7,6 +7,7 @@
     <link rel="icon" type="image/x-icon" href="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <noscript>Please enable Javascript for this page to work!</noscript>
 
     <!-- Meta Data for Discord Rich Embed -->
     <meta content="Online Storage System" property="og:title" />
@@ -17,8 +18,8 @@
     <meta charset="UTF-8">
 
     <!-- Import CSS -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
     <link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
 </head>
 
@@ -33,7 +34,7 @@
                         <div class="input-group">
                             <span><i class="fa-solid fa-envelope p-[0.45rem]"></i></span>
                             <input type="text" placeholder="You Email"
-                                class="input input-lg input-bordered w-full max-w-md" />
+                                class="email input input-lg input-bordered w-full max-w-md" />
                             <span>@chairo.vic.edu.au</span>
                         </div>
                     </div>
@@ -41,7 +42,7 @@
                         <div class="input-group">
                             <span><i class="fa-solid fa-key p-[0.45rem]"></i></span>
                             <input type="password" placeholder="Your Password"
-                                class="input input-lg input-bordered w-full max-w-md pr-12" />
+                                class="password input input-lg input-bordered w-full max-w-md pr-12" />
                         </div>
                     </div>
 
@@ -49,13 +50,13 @@
                         <i class="fa-solid cursor-pointer fa-circle-info"></i>
                     </label>
                 </div>
-
-                <div class="my-[-1rem] text-error hidden">
-                    <b class="text-error">Error: Username Invalid / Taken</b>
+                <!-- TODO: fix overflow problem -->
+                <div class="error my-[-1rem] w-[50%] text-error hidden">
+                    <b class="error-text text-error break-normal"></b>
                 </div>
 
                 <div class="text-lg">
-                    Don't have an account? <a href="/" class="link link-primary">Login now!</a>
+                    Already have an account? <a href="/" class="link link-primary">Login now!</a>
                 </div>
 
                 <!-- Password Info -->
@@ -81,7 +82,7 @@
                         <p class="py-4">something la idk what do put</p>
                         <div class="flex flex-row modal-action">
                             <label for="signup-info" class="btn">Cancel</label>
-                            <label for="register" class="btn">Continue</label>
+                            <label for="signup-info" class="btn" onclick="signup();">Continue</label>
                         </div>
                     </div>
                 </div>
