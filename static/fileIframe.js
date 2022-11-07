@@ -279,6 +279,7 @@ function deleteFile(filename, reload = true) {
 		statusCode: {
 			401: () => {
 				alert("Error deleting file: you're not logged in!");
+				parent.location.reload(true);
 			},
 			500: () => {
 				reload && alert('Unable to delete this file: Server error occurred!');
@@ -310,6 +311,10 @@ function duplicateFile(filename, ignoreExtension) {
 		true,
 		ignoreExtension,
 	);
+}
+
+function downloadSingleFile(filename) {
+	location.href = filename + '?file=true';
 }
 
 function downloadFile(filenames) {
@@ -364,7 +369,7 @@ async function bulkMove() {
 async function bulkDelete() {
 	$('.loadingCopyMove').removeClass('hidden');
 	const names = getALlSelectedName();
-	if (!confirm(`Are you sure you want to delete ${names.length} files?`)) return;
+	if (!confirm(`Are you sure you want to delete ${names.length} files?`)) return $('.loadingCopyMove').addClass('hidden');;
 	for (const name of names) {
 		deleteFile(name, false);
 		await wait(100);

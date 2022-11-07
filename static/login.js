@@ -8,8 +8,7 @@ function login() {
         data: { email: $('.usernameInput').val(), password: $('.passwordInput').val() },
         type: 'POST',
         error: (error) => {
-            console.log(error.responseText);
-            $('.error-text').text(error.responseText);
+            $('.error-text').html(error.responseText.replaceAll('\n', '<br/>'));
             $('.error').show();
         },
         success: () => document.location.reload(true),

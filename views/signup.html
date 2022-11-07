@@ -1,99 +1,115 @@
 <!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- Website Config -->
+		<title>Online Storage System</title>
+		<meta charset="UTF-8" />
+		<link rel="icon" type="image/x-icon" href="" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<noscript>Please enable Javascript for this page to work!</noscript>
 
-<head>
-    <!-- Website Config -->
-    <title>Online Storage System</title>
-    <meta charset="UTF-8">
-    <link rel="icon" type="image/x-icon" href="">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <noscript>Please enable Javascript for this page to work!</noscript>
+		<!-- Meta Data for Discord Rich Embed -->
+		<meta content="Online Storage System" property="og:title" />
+		<meta content="" property="og:description" />
+		<meta content="https://storage.bill-zhanxg.com" property="og:url" />
+		<meta content="picture url" property="og:image" />
+		<meta content="#0000ff" data-react-helmet="true" name="theme-color" />
 
-    <!-- Meta Data for Discord Rich Embed -->
-    <meta content="Online Storage System" property="og:title" />
-    <meta content="" property="og:description" />
-    <meta content="https://storage.bill-zhanxg.com" property="og:url" />
-    <meta content="picture url" property="og:image" />
-    <meta content="#0000ff" data-react-helmet="true" name="theme-color" />
-    <meta charset="UTF-8">
+		<!-- Import CSS -->
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
+		<link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
+	</head>
 
-    <!-- Import CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
-</head>
+	<body>
+		<div class="flex justify-center items-center h-[100vh]">
+			<div class="bg-base-200 rounded-xl p-12">
+				<div class="flex flex-col gap-6 my-[-1rem]">
+					<h1 class="text-4xl font-bold text-center">Online Storage System</h1>
 
-<body>
-    <div class="flex justify-center items-center h-[100vh]">
-        <div class="bg-base-200 rounded-xl p-12">
-            <div class="flex flex-col gap-6 my-[-1rem]">
-                <h1 class="text-4xl font-bold text-center">Online Storage System</h1>
+					<div class="flex flex-col gap-4 relative">
+						<div class="form-control w-full max-w-xl">
+							<div class="input-group">
+								<span><i class="fa-solid fa-envelope p-[0.45rem]"></i></span>
+								<input
+									type="text"
+									placeholder="You Email"
+									class="email input input-lg input-bordered w-full max-w-md"
+								/>
+								<span>@chairo.vic.edu.au</span>
+							</div>
+						</div>
+						<div class="form-control w-full max-w-xl">
+							<div class="input-group">
+								<span><i class="fa-solid fa-key p-[0.45rem]"></i></span>
+								<input
+									type="password"
+									placeholder="Your Password"
+									class="password input input-lg input-bordered w-full max-w-md pr-12"
+								/>
+							</div>
+						</div>
 
-                <div class="flex flex-col gap-4 relative">
-                    <div class="form-control w-full max-w-xl">
-                        <div class="input-group">
-                            <span><i class="fa-solid fa-envelope p-[0.45rem]"></i></span>
-                            <input type="text" placeholder="You Email"
-                                class="email input input-lg input-bordered w-full max-w-md" />
-                            <span>@chairo.vic.edu.au</span>
-                        </div>
-                    </div>
-                    <div class="form-control w-full max-w-xl">
-                        <div class="input-group">
-                            <span><i class="fa-solid fa-key p-[0.45rem]"></i></span>
-                            <input type="password" placeholder="Your Password"
-                                class="password input input-lg input-bordered w-full max-w-md pr-12" />
-                        </div>
-                    </div>
+						<label for="password-info" class="model-button absolute bottom-[15%] right-[5%]">
+							<i class="fa-solid cursor-pointer fa-circle-info"></i>
+						</label>
+					</div>
 
-                    <label for="password-info" class="model-button absolute bottom-[15%] right-[5%]">
-                        <i class="fa-solid cursor-pointer fa-circle-info"></i>
-                    </label>
-                </div>
-                <!-- TODO: fix overflow problem -->
-                <div class="error my-[-1rem] w-[50%] text-error hidden">
-                    <b class="error-text text-error break-normal"></b>
-                </div>
+					<div class="error my-[-1rem] text-error hidden">
+						<b class="error-text text-error"></b>
+					</div>
 
-                <div class="text-lg">
-                    Already have an account? <a href="/" class="link link-primary">Login now!</a>
-                </div>
+					<div class="text-lg">Already have an account? <a href="/" class="link link-primary">Login now!</a></div>
 
-                <!-- Password Info -->
-                <input type="checkbox" id="password-info" class="modal-toggle" />
-                <div class="modal">
-                    <div class="modal-box">
-                        <h3 class="font-bold text-lg">Passsword Requirment</h3>
-                        <p class="py-4">something la idk what do put</p>
-                        <div class="modal-action">
-                            <label for="password-info" class="btn w-full">Got it!</label>
-                        </div>
-                    </div>
-                </div>
+					<!-- Password Info -->
+					<input type="checkbox" id="password-info" class="modal-toggle" />
+					<div class="modal">
+						<div class="modal-box">
+							<h3 class="font-bold text-lg">Password Information</h3>
+							<p class="py-4">
+								Password Suggestion:<br />
+								1. If you use the same password for other sites, don't use that for this website.<br />
+								2. Prefer long password instead of complex password.<br />
+								<br />
+								The password is stored in the database is been hashed using SHA3-512 method (if you don't know what hash
+								is please view
+								<a
+									class="text-blue-300 underline"
+									href="https://www.techtarget.com/searchdatamanagement/definition/hashing"
+									rel="noopener"
+									target="_blank"
+									>this</a
+								>
+								website), but it's still a good practice to use different password for each site. I'll try my best to
+								keep your data safe. But because of there is only 1 developer that do all of works, I can't guarantee
+								that your data is 100% safe compare to other company have a team for security maintaining.
+							</p>
+							<div class="modal-action">
+								<label for="password-info" class="btn w-full">Got it!</label>
+							</div>
+						</div>
+					</div>
 
-                <label class="btn btn-lg btn-primary model-button" for="signup-info">
-                    Sign Up
-                </label>
+					<label class="btn btn-lg btn-primary model-button" for="signup-info"> Sign Up </label>
 
-                <input type="checkbox" id="signup-info" class="modal-toggle" />
-                <div class="modal">
-                    <div class="modal-box">
-                        <h3 class="font-bold text-lg">Passsword Requirment</h3>
-                        <p class="py-4">something la idk what do put</p>
-                        <div class="flex flex-row modal-action">
-                            <label for="signup-info" class="btn">Cancel</label>
-                            <label for="signup-info" class="btn" onclick="signup();">Continue</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
+					<input type="checkbox" id="signup-info" class="modal-toggle" />
+					<div class="modal">
+						<div class="modal-box">
+							<h3 class="font-bold text-lg">Passsword Requirment</h3>
+							<p class="py-4">something la idk what do put</p>
+							<div class="flex flex-row modal-action">
+								<label for="signup-info" class="btn">Cancel</label>
+								<label for="signup-info" class="btn" onclick="signup();">Continue</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
-<!-- Import JS -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/sign-up.js"></script>
-
-
+		<!-- Import JS -->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script src="/sign-up.js"></script>
+	</body>
 </html>

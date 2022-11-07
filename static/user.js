@@ -43,6 +43,14 @@ window.parent.onmessage = async (event) => {
 		);
 	}
 	if (event.data?.drag) {
+		if (
+			Object.keys(event.data).length > 100 &&
+			!confirm(
+				"You're trying to upload a folder contain more than 100 subfolders in 1 go, server errors might occur. Still continue?",
+			)
+		)
+			return;
+
 		let cacheFolders = {};
 		for (const key in event.data) {
 			if (key === 'drag' || event.data[key].length === 0) continue;
@@ -58,8 +66,14 @@ window.parent.onmessage = async (event) => {
 					.then(() => {
 						cacheFolders[i].push(dir);
 					})
-					.catch((jqXHR) => {
+					.catch(async (jqXHR) => {
 						if (jqXHR.status === 405) cacheFolders[i].push(dir);
+						else
+							await createFolder(`${currentPath}/${looped.join('/')}`)
+								.then(() => {
+									cacheFolders[i].push(dir);
+								})
+								.catch(() => {});
 					});
 			}
 			// Upload files
@@ -223,6 +237,7 @@ function startUpload(id, path, files) {
 	}
 	uploading = {
 		id,
+		startTime: Date.now(),
 		xhr: $.ajax({
 			xhr: function () {
 				var xhr = new XMLHttpRequest();
@@ -263,7 +278,8 @@ function startUpload(id, path, files) {
 					$(`#${uploading.id}`).remove();
 					uploadFinished++;
 					const next = uploadQueue.shift();
-					startUpload(next.id, next.path, next.files);
+					const timeUsed = Date.now() - uploading.startTime;
+					setTimeout(() => startUpload(next.id, next.path, next.files), 1000 - timeUsed);
 				} else {
 					const progressBar = $('.uploadDiv');
 					if (!progressBar.hasClass('hidden')) progressBar.addClass('hidden');

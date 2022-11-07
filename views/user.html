@@ -16,7 +16,7 @@
 			property="og:description"
 		/>
 		<meta content="https://panel.bill-zhanxg.com/sign-up" property="og:url" />
-		<meta content="picture url" property="og:image" />
+		<meta content="/favicon.ico" property="og:image" />
 
 		<!-- Imports -->
 		<script src="https://cdn.tailwindcss.com"></script>
@@ -65,10 +65,10 @@
 		<label for="upload-files-modal" class="modal cursor-pointer">
 			<label class="modal-box relative w-11/12 max-w-5xl">
 				<h3 class="font-bold text-lg py-4">File Uploads</h3>
-				<div class="uploadList flex flex-col gap-2 text-xl"></div>
 				<div class="modal-action">
 					<label class="btn btn-error w-full" onclick="emptyUploads()">Clear Queue</label>
 				</div>
+				<div class="uploadList flex flex-col gap-2 text-xl"></div>
 			</label>
 		</label>
 
@@ -115,4 +115,6 @@
 	<script src="/user.js"></script>
 </html>
 
-// TODO: Add account menu and make sure to add admin control panel which allows me to create new accounts manually
+<!-- TODO-BACKEND: Add account menu and make sure to add admin control panel which allows me to create new accounts manually -->
+<!-- TODO-FRONTEND: conformation box before exit while downloading -->
+<!-- TODO-FRONTEND: conformation box when uploading folder with too many sub-folders -->

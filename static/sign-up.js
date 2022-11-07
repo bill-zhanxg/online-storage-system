@@ -4,12 +4,11 @@ function signup() {
 		data: { email: $('.email').val(), password: $('.password').val() },
 		type: 'POST',
 		error: (error) => {
-			$('.error-text').text(error.responseText);
+			$('.error-text').html(error.responseText.replaceAll('\n', '<br/>'));
 			$('.error').show();
 		},
 		success: () => {
-			// TODO: grammar fix
-			$('.error-text').text('Please check your email to confirm your account before being able to use it. Don\'t forgot to check your junk folder as well!');
+			$('.error-text').html('Please verify your account via the email received to<br/>activate your account. The email may be in your junk folder!');
 			$('.error').show();
 		},
 	});

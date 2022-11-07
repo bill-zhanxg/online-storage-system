@@ -1,0 +1,84 @@
+<head>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
+	<link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
+	<script src="https://cdn.tailwindcss.com"></script>
+	<style>
+		.centered {
+			position: fixed;
+			top: 100%;
+			left: 50%;
+			padding: 20px;
+			transform: translate(-50%, -100%);
+		}
+	</style>
+</head>
+<body ondragover="dragover(event, null)">
+	<div
+		class="hidden loadingCopyMove h-full w-full fixed z-10 left-0 top-0 overflow-x-hidden flex justify-center items-center"
+		style="background-color: rgba(0, 0, 0, 0.65)"
+	>
+		<img src="/loading.gif" alt="funny GIF" width="10%" />
+	</div>
+	<div
+		onclick="handleFileDragover(false);"
+		ondragleave="handleFileDragover(false);"
+		ondrop="dropFiles(event);"
+		class="hidden fileDragover border-dashed border-[15px] border-blue-500 rounded h-full w-full fixed z-10 left-0 top-0 overflow-x-hidden flex justify-center items-center"
+		style="background-color: rgba(0, 0, 0, 0.65)"
+	>
+		<h1 class="text-white text-2xl">Drag file(s) here to upload!</h1>
+	</div>
+
+	<input type="checkbox" id="rename-file-modal" class="modal-toggle" />
+	<label for="rename-file-modal" class="modal cursor-pointer">
+		<label class="modal-box relative">
+			<h3 class="font-bold text-lg py-4">File Name</h3>
+			<input
+				type="text"
+				placeholder="File path"
+				class="filename input input-bordered w-full max-w-xl"
+				oldName=""
+				onkeypress="if (event.keyCode == 13) { renameFile(); }"
+			/>
+			<div class="modal-action">
+				<label class="btn w-full" onclick="renameFile();">Rename File</label>
+			</div>
+		</label>
+	</label>
+	<input type="checkbox" id="move-file-modal" class="modal-toggle" />
+	<label for="move-file-modal" class="modal cursor-pointer">
+		<label class="modal-box relative">
+			<h3 class="font-bold text-lg py-4">New path</h3>
+			<input
+				type="text"
+				placeholder="File path"
+				class="pathname input input-bordered w-full max-w-xl"
+				value=""
+				onkeypress="if (event.keyCode == 13) { bulkMove(); }"
+			/>
+			<div class="modal-action">
+				<label class="btn w-full" onclick="bulkMove();">Bulk Move File</label>
+			</div>
+		</label>
+	</label>
+
+	<div class="filePanel flex flex-col gap-2 mx-8 text-xl"></div>
+
+	<div
+		class="bulkAction bg-base-200 fixed top-full left-[50%] translate-x-[-50%] translate-y-[-100%] border-[2px] border-base-300 rounded-xl p-4 hidden"
+	>
+		<div class="flex flex-row gap-2">
+			<label class="btn btn-primary" onclick="bulkDownload();">Download</label>
+			<label class="btn btn-primary" for="move-file-modal">Move</label>
+			<label
+				class="btn btn-primary bg-red-500 hover:bg-red-600 border-red-500 hover:border-red-600"
+				onclick="bulkDelete();"
+				>Delete</label
+			>
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+	<script src="/fileIframe.js"></script>
+</body>
