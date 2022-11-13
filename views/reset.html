@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<!-- Website Config -->
+		<title>Online Storage System - Reset Account</title>
+		<meta
+			name="description"
+			content="Online Storage System is a place where you can store your file on the server just like Google Drive. Not recommended for actual uses, this website made for learning purpose by Bill.IHCha"
+		/>
+		<meta content="#0000ff" data-react-helmet="true" name="theme-color" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<noscript>Please enable Javascript for this page to work!</noscript>
+
+		<!-- Meta Tags for Rich Embed -->
+		<meta property="og:url" content="https://storage.bill-zhanxg.com/reset/" />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content="Online Storage System - Reset Account" />
+		<meta
+			property="og:description"
+			content="Online Storage System is where you can store your file on the server just like Google Drive. Not recommended for actual uses, this website was made for learning purposes by Bill.IHCha"
+		/>
+		<meta property="og:image" content="/icon.png" />
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta property="twitter:domain" content="storage.bill-zhanxg.com" />
+		<meta property="twitter:url" content="https://storage.bill-zhanxg.com/reset/" />
+		<meta name="twitter:title" content="Online Storage System - Reset Account" />
+		<meta
+			name="twitter:description"
+			content="Online Storage System is where you can store your file on the server just like Google Drive. Not recommended for actual uses, this website was made for learning purposes by Bill.IHCha"
+		/>
+		<meta name="twitter:image" content="/icon.png" />
+
+		<!-- Import CSS -->
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<div class="flex justify-center items-center h-[100vh]">
+			<div class="bg-base-200 rounded-xl p-12">
+				<div class="flex flex-col gap-6 max-w-md text-center">
+					<h1 class="text-4xl font-bold text-center">Reset Account</h1>
+					<p>
+						Did someone tried to create an account without your permission and you don't know the password? Here is
+						where you can delete your unverified account and create a new one!
+					</p>
+
+					<div class="flex flex-col gap-4">
+						<div class="form-control w-full max-w-xl">
+							<input
+								type="text"
+								placeholder="Enter Email Address"
+								class="emailInput input input-lg input-bordered w-full max-w-md"
+								onkeypress="if (event.keyCode === 13) reset();"
+							/>
+						</div>
+					</div>
+
+					<div class="error my-[-1rem] text-error hidden">
+						<b class="error-text text-error"></b>
+					</div>
+
+					<div class="text-lg">Trying to login? <a href="/" class="link link-primary">Click here!</a></div>
+
+					<button class="btn btn-lg btn-primary" onclick="reset()">Reset Unverified Account</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Import JS -->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script>
+			'use strict';
+
+			$(window).on('load', () => {
+				$('.emailInput').focus();
+			});
+
+			function reset() {
+				$.ajax({
+					url: '/account/reset',
+					data: { email: $('.emailInput').val() },
+					type: 'DELETE',
+					error: (error) => {
+						$('.error-text').html(
+							error.responseText
+								.replaceAll(/<(.*), (.*)>/g, '<a href="$1" class="link link-primary">$2</a>')
+								.replaceAll('\n', '<br/>'),
+						);
+					},
+					success: () => {
+						$('.error-text').html(
+							'Successfully reset your account, try <a href="/signup" class="link link-primary">creating a new one</a>!',
+						);
+					},
+					complete: () => {
+						$('.error').show();
+					},
+				});
+			}
+		</script>
+	</body>
+</html>

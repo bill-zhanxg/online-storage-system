@@ -1,8 +1,11 @@
+'use strict';
+
 const { Client, Databases, Query, ID } = require('node-appwrite');
 const nodemailer = require('nodemailer');
 const zip = require('express-easy-zip');
 const express = require('express');
 const session = require('express-session');
+const sessionstore = require('sessionstore');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
 const fs = require('fs');
@@ -21,8 +24,9 @@ const domain = `localhost:${port}`;
 // const domain = 'storage.bill-zhanxg.com';
 
 // TODO-BACKEND: implement cache html file
-//  TODO-FRONTEND: clear console.log
-//  TODO-FRONTEND: check embed
+//  TODO-FRONTEND: fix all meta tag
+//  TODO-FRONTEND: add storage limit
+// TODO: check bulk file upload
 
 process.on('uncaughtException', (err, origin) => {
 	console.log(err);
@@ -38,15 +42,19 @@ const transporter = nodemailer.createTransport({
 });
 /**
  * @param {string} receiver - The email address of the user
- * @param {number} code - The uuid of the document
+ * @param {string} code - The uuid of the document
  * @returns {SMTPTransport.SentMessageInfo}
  */
-async function sendMail(receiver, code) {
+async function sendMail(receiver, code, verify = true) {
 	const info = await transporter.sendMail({
 		from: `Online Storage System <${config.email_user}>`,
 		to: receiver,
-		subject: 'Verification for Online Storage System',
-		text: `Open this link in your browser to validate your account on Online Storage System: https://${domain}/verify?code=${code}`,
+		subject: `${verify ? 'Verification' : 'Password reset'} for Online Storage System`,
+		text: `${
+			verify
+				? 'Open this link in your browser to validate your account on Online Storage System'
+				: 'Open this link in your browser to reset your password'
+		}: https://${domain}/verify?code=${code}`,
 		html: `
 			<div style="background-color: white;">
 				<div
@@ -62,9 +70,13 @@ async function sendMail(receiver, code) {
 				>
 					<h1>Online Storage System</h1>
 					<div style="background-color: white; display: flex; align-items: center; justify-content: center; padding: 50px; flex-direction: column;">
-						<h2>Please validate your email</h2>
-						<h5>Click on the link to validate your account on <span style="color: #2354beee;">Online Storage System</span>.<br /><span style="color: red;">NOTE: Please do not share this link with other people!</span></h5>
-						<a href="https://${domain}/verify?code=${code}" target="_blank">https://${domain}/verify?code=${code}</a>
+						<h2>${verify ? 'Please validate your email' : 'Password reset'}</h2>
+						<h5>Click on the link to ${
+							verify ? 'validate your account' : 'reset your password'
+						} on <span style="color: #2354beee;">Online Storage System</span>.<br /><span style="color: red;">NOTE: Please do not share this link with other people!</span></h5>
+						<a href="https://${domain}/${verify ? 'verify' : 'password-reset'}?code=${code}" target="_blank">https://${domain}/${
+			verify ? 'verify' : 'password-reset'
+		}?code=${code}</a>
 						<h5>If you don't recognize this email, please ignore it. No changes have been made to your account!</h5>
 					</div>
 				</div>
@@ -82,13 +94,15 @@ const appwrite = new Client()
 	.setEndpoint(config.appwrite_endpoint)
 	.setProject(config.appwrite_project)
 	.setKey(config.appwrite_key);
-const database = new Databases(appwrite);
+const databases = new Databases(appwrite);
 
+const ss = sessionstore.createSessionStore();
 app.use(
 	session({
 		secret: config.secret,
 		resave: false,
 		saveUninitialized: true,
+		store: ss,
 	}),
 );
 app.use(express.json());
@@ -100,15 +114,11 @@ app.use(
 	}),
 );
 
-// app.get('/', (req, res) => {
-// 	res.sendFile(path.join(__dirname, 'views/test.html'));
-// });
-
 app.get('/verify', async (req, res, next) => {
 	const code = req.query.code;
 	if (req.session.loggedin || code === undefined) return next();
 
-	const documents = await database.listDocuments(
+	const documents = await databases.listDocuments(
 		config.appwrite_database_id,
 		config.appwrite_unverified_collection_id,
 		[Query.equal('id', code)],
@@ -116,9 +126,9 @@ app.get('/verify', async (req, res, next) => {
 
 	if (documents.total === 0)
 		return res.send(`
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
-	<script src="https://cdn.tailwindcss.com"></script>
-	<link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
 		<body>
 			<div class="flex flex-col justify-center items-center h-[100vh]">
 				<div class="text-center bg-base-200 py-8 px-12 rounded-xl">
@@ -131,9 +141,12 @@ app.get('/verify', async (req, res, next) => {
 		</body>
 	`);
 	const { $id, email, password } = documents.documents[0];
-	const id = (await database.listDocuments(config.appwrite_database_id, config.appwrite_collection_id)).total + 1;
-	database.deleteDocument(config.appwrite_database_id, config.appwrite_unverified_collection_id, $id);
-	database.createDocument(config.appwrite_database_id, config.appwrite_collection_id, ID.unique(), {
+	// TODO: TEST
+	const id =
+		(await databases.listDocuments(config.appwrite_database_id, config.appwrite_collection_id)).documents.pop().id +
+			1 || 1;
+	databases.deleteDocument(config.appwrite_database_id, config.appwrite_unverified_collection_id, $id);
+	databases.createDocument(config.appwrite_database_id, config.appwrite_collection_id, ID.unique(), {
 		id,
 		email,
 		password,
@@ -143,6 +156,92 @@ app.get('/verify', async (req, res, next) => {
 	req.session.save();
 	res.redirect('/');
 	res.end();
+});
+
+// Serve Static HTML
+app.get('/password-reset', async (req, res, next) => {
+	if (req.session.loggedin || !req.query.code) return next();
+	res.sendFile(path.join(__dirname + '/views/password-reset.html'));
+});
+
+// Send Email
+app.post('/password-reset', async (req, res) => {
+	const send = (text) => res.status(400).send(text).end();
+	const email = req.body.email;
+	if (!email) return send('Please fill the email field before reset password!');
+	if (!email.includes('@')) email += '@chairo.vic.edu.au';
+	const docs = await databases.listDocuments(config.appwrite_database_id, config.appwrite_collection_id, [
+		Query.equal('email', email),
+	]);
+	if (docs.total < 1) return send("The email you have entered isn't in the database!");
+	const { $id } = docs.documents[0];
+	const result = await databases
+		.createDocument(config.appwrite_database_id, config.appwrite_password_reset_collection_id, $id, {
+			code: v4(),
+		})
+		.catch(async (err) => {
+			if (err.type !== 'document_already_exists') return err.message;
+			else {
+				const docs = await databases.listDocuments(
+					config.appwrite_database_id,
+					config.appwrite_password_reset_collection_id,
+					[Query.equal('$id', $id)],
+				);
+				return docs.documents[0];
+			}
+		});
+	if (typeof result === 'string') return send(result);
+	sendMail(email, result.code, false)
+		.then(() => send('Please reset your password via the email received.\nThe email may be in your junk folder!'))
+		.catch(() => send('Failed to send verification email!\nMake sure the email you entered is correct!'));
+});
+
+// Reset Password
+app.patch('/password-reset', async (req, res) => {
+	const send = (text) => res.status(400).send(text).end();
+	// Check if the code exist in the database
+	const code = req.body.code;
+	let password = req.body.password;
+	if (!code) return send('Please do not open this page as a saved HTML page! (Can not find code query in URL)');
+	if (!password) return send('The password field can not be empty!');
+	const resetDocs = await databases.listDocuments(
+		config.appwrite_database_id,
+		config.appwrite_password_reset_collection_id,
+		[Query.equal('code', code)],
+	);
+	if (resetDocs.total < 1) return send("The code doesn't exist in the database!");
+	await databases.deleteDocument(
+		config.appwrite_database_id,
+		config.appwrite_password_reset_collection_id,
+		resetDocs.documents[0].$id,
+	);
+	databases
+		.updateDocument(config.appwrite_database_id, config.appwrite_collection_id, resetDocs.documents[0].$id, {
+			password: createHash('sha3-512').update(password).digest('hex'),
+		})
+		.then(() => res.sendStatus(200))
+		.catch(() => send('Can not find the account associate with the code! Try </signup, create a new one>?'));
+});
+
+app.get('/reset', async (req, res, next) => {
+	if (req.session.loggedin) return next();
+	res.sendFile(path.join(__dirname + '/views/reset.html'));
+});
+
+app.delete('/account/reset', async (req, res) => {
+	const send = (text) => res.status(400).send(text).end();
+	const email = req.body.email;
+	if (!email) return send('Please fill in all fields!');
+	const docs = await databases.listDocuments(config.appwrite_database_id, config.appwrite_unverified_collection_id, [
+		Query.equal('email', email),
+	]);
+	if (docs.total < 1) return send('Email does not exist in the database, maybe try </signup, create an account>?');
+	await databases.deleteDocument(
+		config.appwrite_database_id,
+		config.appwrite_unverified_collection_id,
+		docs.documents[0].$id,
+	);
+	res.sendStatus(200);
 });
 
 app.use(zip());
@@ -160,18 +259,18 @@ app.get('/download', async (req, res, next) => {
 		if (typeof path.root !== 'string') throw new Error('Invalid path');
 		if (!(path.files instanceof Array)) throw new Error('Invalid files');
 	} catch (err) {
-		return res.status(400).end();
+		return res.sendStatus(400);
 	}
 	// Check if path is only 1 array and if it is check if it's a file, if it is then download without zip it
 	if (path.files.length === 1) {
 		const filePath = checkPath(req.session.data.id, path.root, [path.files[0]]);
-		if (!fs.existsSync(filePath)) return res.status(404).end();
+		if (!fs.existsSync(filePath)) return res.sendStatus(404);
 		let stat = await fs.promises.stat(filePath).catch(() => null);
-		if (!stat) res.status(500).end();
-		if (req.method === 'HEAD') return res.status(200).end();
+		if (!stat) res.sendStatus(500);
+		if (req.method === 'HEAD') return res.sendStatus(200);
 		if (stat.isFile()) return res.download(filePath);
 	}
-	if (req.method === 'HEAD') return res.status(200).end();
+	if (req.method === 'HEAD') return res.sendStatus(200);
 	// Download as zip
 	res.zip({
 		files: path.files.map((p) => {
@@ -216,25 +315,24 @@ app.post('/auth', authRateLimit, async (req, res) => {
 	// Capture the input fields
 	let email = req.body.email;
 	const password = req.body.password;
-	if (email === undefined || password === undefined) return res.status(400).end();
+	if (email === undefined || password === undefined) return res.sendStatus(400);
 	if (!email.trim() && !password.trim()) {
 		req.session.loggedin = true;
-		req.session.data = { id: 0, email: null, password: null };
+		req.session.data = { id: 0, email: 'guest@mail.com', password: null };
 		req.session.save();
 		return res.end();
 	}
 	if (!email.includes('@')) email += '@chairo.vic.edu.au';
 
-	const hash = createHash('sha3-512');
-	const hashedPassword = hash.update(password).digest('hex');
+	const hashedPassword = createHash('sha3-512').update(password).digest('hex');
 
-	const documents = await database.listDocuments(config.appwrite_database_id, config.appwrite_collection_id, [
+	const documents = await databases.listDocuments(config.appwrite_database_id, config.appwrite_collection_id, [
 		Query.equal('email', email),
 		Query.equal('password', hashedPassword),
 	]);
 
 	if (documents.total === 0) {
-		const prevDocs = await database.listDocuments(
+		const prevDocs = await databases.listDocuments(
 			config.appwrite_database_id,
 			config.appwrite_unverified_collection_id,
 			[Query.equal('email', email)],
@@ -244,7 +342,7 @@ app.post('/auth', authRateLimit, async (req, res) => {
 			send(
 				'Please verify your account via the email received to\nactivate your account. The email may be in your junk folder!',
 			);
-		else send('Incorrect Email and/or Password!');
+		else send('Incorrect Email and/or Password! Try <reset password>!');
 		return;
 	}
 	const user = documents.documents[0];
@@ -258,45 +356,48 @@ app.post('/signup', authRateLimit, async (req, res) => {
 	const send = (text) => res.status(400).send(text).end();
 	let email = req.body.email;
 	const password = req.body.password;
-	if (email === undefined || password === undefined) return res.status(400).end();
+	if (email === undefined || password === undefined) return res.sendStatus(400);
 	if (!email.trim() && !password.trim()) return send('Please fill in all fields!');
 	if (email.includes('+')) email = email.substring(0, email.indexOf('+'));
 	email += '@chairo.vic.edu.au';
 
-	const hash = createHash('sha3-512');
-	const hashedPassword = hash.update(password).digest('hex');
+	const hashedPassword = createHash('sha3-512').update(password).digest('hex');
 
-	const prevDocs = await database.listDocuments(config.appwrite_database_id, config.appwrite_collection_id);
-	const unverifiedDocs = await database.listDocuments(
+	const prevDocs = await databases.listDocuments(config.appwrite_database_id, config.appwrite_collection_id);
+	const unverifiedDocs = await databases.listDocuments(
 		config.appwrite_database_id,
 		config.appwrite_unverified_collection_id,
 		[Query.equal('email', email)],
 	);
-	if (prevDocs.documents.some((doc) => doc.email === email)) return send('Email already exists!');
+	if (prevDocs.documents.some((doc) => doc.email === email)) return send('Email already exists! Try </, logging in>!');
 	if (unverifiedDocs.total > 0) {
 		sendMail(unverifiedDocs.documents[0].email, unverifiedDocs.documents[0].id)
-			.then(() => res.status(200).end())
+			.then(() =>
+				send(
+					'Please verify your account via the email received to\nactivate your account. The email may be in your junk folder!\nSomeone else used this email? </reset, Reset your account!>',
+				),
+			)
 			.catch(() =>
-				send('Email already exists, failed to send verification email!\nMake sure the email you entered is correct!'),
+				send(
+					'Email already exists, failed to send verification email!\nMake sure the email you entered is correct!\nSomeone else used this email? </reset, Reset your account!>',
+				),
 			);
 		return;
 	}
 	const id = v4();
-	database.createDocument(config.appwrite_database_id, config.appwrite_unverified_collection_id, ID.unique(), {
+	databases.createDocument(config.appwrite_database_id, config.appwrite_unverified_collection_id, ID.unique(), {
 		id,
 		email,
 		password: hashedPassword,
 	});
 	sendMail(email, id);
-	res.status(200).end();
+	res.sendStatus(200);
 });
 
 app.post('/auth/logout', authRateLimit, (req, res) => {
 	req.session.destroy();
 	res.end();
 });
-
-app.post('/account/create', (req, res) => {});
 
 // File API
 function checkPath(id, dir, extra = []) {
@@ -311,9 +412,8 @@ function checkPath(id, dir, extra = []) {
 
 app.get('*', async (req, res) => {
 	let file = req.query.file ? true : false;
-	// TODO-BACKEND: check if the user is in unverified collection
 	if (!req.session.loggedin)
-		return file ? res.status(401).end() : res.sendFile(path.join(__dirname + '/views/login.html'));
+		return file ? res.sendStatus(401) : res.sendFile(path.join(__dirname + '/views/login.html'));
 
 	let userId = req.session.data.id;
 	let dir = req.params[0];
@@ -437,13 +537,33 @@ app.get('*', async (req, res) => {
 		}
 		$('body').attr('currentPath', currentPath);
 		$('.files').attr('src', `${currentPath ? currentPath : '/'}?file=true`);
+		$('.email').text(req.session.data.email.toUpperCase());
+		if (req.session.data.id === 0) {
+			$('.guest-disable-btn').addClass('btn-disabled').css({ 'background-color': '#e5e7eb', color: 'black' });
+			$('.body').append(`
+					<input type="checkbox" id="guest-mode-modal" class="modal-toggle" />
+					<label for="guest-mode-modal" class="modal cursor-pointer">
+						<label class="modal-box relative">
+							<h3 class="font-bold text-lg">Guest Mode</h3>
+							<p class="py-4">
+								Hello, you're currently in guest mode! In this mode, you're able to do anything that normal user can do except
+								change password and delete account without an account. But please be mindful that everyone on the internet
+								have access to this storage, that means everyone will be able to view, download or delete the file you
+								uploaded here. To create an account, sign-out and create one!
+							</p>
+							<div class="modal-action">
+								<label class="btn w-full" for="guest-mode-modal">Got it!</label>
+							</div>
+						</label>
+					</label>
+				`);
+		}
 		res.send($.html());
 	}
 });
 
 app.use('*', (req, res, next) => {
-	if (!req.session.loggedin) return res.status(401).end();
-	res.code = (code) => res.status(code).end();
+	if (!req.session.loggedin) return res.sendStatus(401);
 	next();
 });
 
@@ -460,7 +580,7 @@ app.post('/files/upload', apiRateLimit, (req, res) => {
 
 	req.busboy.on('file', (fieldname, file, info) => {
 		let path = req.body.path;
-		if (path === undefined) return res.code(400);
+		if (path === undefined) return res.sendStatus(400);
 		let name = decodeURI(info.filename) || 'New file';
 		let filePath = checkPath(req.session.data.id, path, [name]);
 		files.push(filePath);
@@ -474,19 +594,19 @@ app.post('/files/upload', apiRateLimit, (req, res) => {
 	function error() {
 		for (const stream of streams) stream.destroy();
 		files.forEach((file) => fs.unlink(file, () => {}));
-		res.code(500);
+		res.sendStatus(500);
 	}
 
 	req.busboy.once('finish', () => {
 		streams.forEach((stream) => stream.end());
-		res.code(200);
+		res.sendStatus(200);
 	});
 });
 
 app.delete('/files/delete', apiRateLimit, (req, res) => {
-	fs.rm(checkPath(req.session.data.id, req.body.path), { recursive: true }, (err) => {
-		if (err) return res.code(500);
-		res.code(200);
+	fs.rm(checkPath(req.session.data.id, req.body.path), { recursive: true, force: true }, (err) => {
+		if (err) return res.sendStatus(500);
+		res.sendStatus(200);
 	});
 });
 
@@ -494,11 +614,11 @@ app.delete('/files/delete', apiRateLimit, (req, res) => {
 app.put('/files/update', apiRateLimit, (req, res) => {
 	let oldPath = checkPath(req.session.data.id, req.body.oldPath);
 	let newPath = checkPath(req.session.data.id, req.body.newPath);
-	if (fs.existsSync(newPath) && req.body.force !== 'true') return res.code(405);
+	if (fs.existsSync(newPath) && req.body.force !== 'true') return res.sendStatus(405);
 
 	fs.rename(oldPath, newPath, (err) => {
-		if (err) return res.code(500);
-		return res.code(200);
+		if (err) return res.sendStatus(500);
+		return res.sendStatus(200);
 	});
 });
 
@@ -506,23 +626,76 @@ app.put('/files/update', apiRateLimit, (req, res) => {
 app.put('/files/copy', apiRateLimit, (req, res) => {
 	let oldPath = checkPath(req.session.data.id, req.body.oldPath);
 	let newPath = checkPath(req.session.data.id, req.body.newPath);
-	if (fs.existsSync(newPath) && req.body.force !== 'true') return res.code(405);
+	if (fs.existsSync(newPath) && req.body.force !== 'true') return res.sendStatus(405);
 
 	fs.cp(oldPath, newPath, { recursive: true }, (err) => {
-		if (err) return res.code(500);
-		return res.code(200);
+		if (err) return res.sendStatus(500);
+		return res.sendStatus(200);
 	});
 });
 
 app.post('/folder/create', (req, res) => {
 	let folderPath = req.body.path;
-	if (!folderPath) return res.code(400);
+	if (!folderPath) return res.sendStatus(400);
 	folderPath = checkPath(req.session.data.id, folderPath);
-	if (fs.existsSync(folderPath)) return res.code(405);
+	if (fs.existsSync(folderPath)) return res.sendStatus(405);
 	fs.mkdir(folderPath, (err) => {
-		if (err) return res.code(500);
-		res.code(200);
+		if (err) return res.sendStatus(500);
+		res.sendStatus(200);
 	});
+});
+
+app.post('/storage', async (req, res) => {
+	const userPath = checkPath(req.session.data.id);
+	const megaBytes = Math.round((await fastFolderSize(userPath)) / (1000 * 1000)).toString();
+	const total =
+		req.session.id === 0
+			? 1000
+			: (
+					await databases.listDocuments(config.appwrite_database_id, config.appwrite_collection_id, [
+						Query.equal('email', req.session.data.email),
+					])
+			  ).documents[0]?.storage || 1000;
+	res.send({ used: megaBytes, total });
+});
+
+app.delete('/account/delete', (req, res) => {
+	const send = (text) => res.status(400).send(text).end();
+	if (req.session.data.id === 0) return send("You can't delete the account in guest mode!");
+	fs.rm(checkPath(req.session.data.id), { recursive: true, force: true }, async (err) => {
+		if (err) return send('Fail to remove your storage container, please try again later!');
+		const user = await databases.listDocuments(config.appwrite_database_id, config.appwrite_collection_id, [
+			Query.equal('email', req.session.data.email),
+		]);
+		if (user.total < 1) return res.sendStatus(405);
+		await databases.deleteDocument(config.appwrite_database_id, config.appwrite_collection_id, user.documents[0].$id);
+		await databases
+			.deleteDocument(config.appwrite_database_id, config.appwrite_password_reset_collection_id, user.documents[0].$id)
+			.catch(() => {});
+		res.sendStatus(200);
+	});
+});
+
+app.patch('/account/password', async (req, res) => {
+	const send = (text) => res.status(400).send(text).end();
+	const currentPass = req.body.currentPassword;
+	const newPass = req.body.newPassword;
+	if (!(currentPass && newPass)) return send('Please fill in all fields!');
+	if (req.session.data.id === 0) return send("You can't change your password in guest mode!");
+	const user = await databases.listDocuments(config.appwrite_database_id, config.appwrite_collection_id, [
+		Query.equal('email', req.session.data.email),
+		Query.equal('password', createHash('sha3-512').update(currentPass).digest('hex')),
+	]);
+	if (user.total < 1) return send('The password you have entered is incorrect!');
+	await databases.updateDocument(config.appwrite_database_id, config.appwrite_collection_id, user.documents[0].$id, {
+		password: createHash('sha3-512').update(newPass).digest('hex'),
+	});
+	// Log all logged in users out
+	Object.entries(ss.sessions)
+		.map((o) => ({ sid: o[0], session: o[1] }))
+		.filter((o) => JSON.parse(o.session).data.email === 'zhanxz@chairo.vic.edu.au')
+		.forEach((session) => ss.destroy(session.sid));
+	res.sendStatus(200);
 });
 
 app.listen(port, () => {

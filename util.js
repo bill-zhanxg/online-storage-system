@@ -1,3 +1,5 @@
+'use strict';
+
 function formatBytes(bytes) {
 	if (bytes < 1000) bytes = `${bytes} Byte${bytes > 1 ? 's' : ''}`;
 	else if (bytes < 1000000) bytes = `${Math.round(bytes / 1000)} KB`;

@@ -1,3 +1,5 @@
+'use strict';
+
 let currentPath = $('body').attr('currentPath') || '';
 $('.noneClick').on('click', (event) => event.stopPropagation());
 
@@ -207,7 +209,6 @@ async function dropFiles(event) {
  */
 function insertBeforeExtension(path, insert, ignoreExtension = false) {
 	// check if ignoreExtension is true
-	console.log(path + insert);
 	if (ignoreExtension) return path + insert;
 	// Get the filename
 	const filename = path.split('/').pop();

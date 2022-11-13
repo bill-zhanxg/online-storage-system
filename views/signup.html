@@ -1,13 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<!-- Website Config -->
-		<title>Online Storage System</title>
 		<meta charset="UTF-8" />
-		<link rel="icon" type="image/x-icon" href="" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<!-- Website Config -->
+		<title>Online Storage System - Signup</title>
+		<meta
+			name="description"
+			content="Online Storage System is a place where you can store your file on the server just like Google Drive. Not recommended for actual uses, this website made for learning purpose by Bill.IHCha"
+		/>
+		<meta content="#0000ff" data-react-helmet="true" name="theme-color" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<noscript>Please enable Javascript for this page to work!</noscript>
+
+		<!-- Meta Tags for Rich Embed -->
+		<meta property="og:url" content="https://storage.bill-zhanxg.com/signup/" />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content="Online Storage System - Signup" />
+		<meta
+			property="og:description"
+			content="Online Storage System is where you can store your file on the server just like Google Drive. Not recommended for actual uses, this website was made for learning purposes by Bill.IHCha"
+		/>
+		<meta property="og:image" content="/icon.png" />
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta property="twitter:domain" content="storage.bill-zhanxg.com" />
+		<meta property="twitter:url" content="https://storage.bill-zhanxg.com/signup/" />
+		<meta name="twitter:title" content="Online Storage System - Signup" />
+		<meta
+			name="twitter:description"
+			content="Online Storage System is where you can store your file on the server just like Google Drive. Not recommended for actual uses, this website was made for learning purposes by Bill.IHCha"
+		/>
+		<meta name="twitter:image" content="/icon.png" />
 
 		<!-- Meta Data for Discord Rich Embed -->
 		<meta content="Online Storage System" property="og:title" />
@@ -23,6 +46,12 @@
 	</head>
 
 	<body>
+		<div
+			class="hidden loading h-full w-full fixed z-10 left-0 top-0 overflow-x-hidden flex justify-center items-center"
+			style="background-color: rgba(0, 0, 0, 0.65)"
+		>
+			<img src="/loading.gif" alt="Loading GIF" width="10%" />
+		</div>
 		<div class="flex justify-center items-center h-[100vh]">
 			<div class="bg-base-200 rounded-xl p-12">
 				<div class="flex flex-col gap-6 my-[-1rem]">
@@ -36,6 +65,7 @@
 									type="text"
 									placeholder="You Email"
 									class="email input input-lg input-bordered w-full max-w-md"
+									onkeypress="if (event.keyCode === 13) $('.password').focus();"
 								/>
 								<span>@chairo.vic.edu.au</span>
 							</div>
@@ -47,6 +77,7 @@
 									type="password"
 									placeholder="Your Password"
 									class="password input input-lg input-bordered w-full max-w-md pr-12"
+									onkeypress="if (event.keyCode === 13) $('#signup-info').prop('checked', true);"
 								/>
 							</div>
 						</div>
@@ -96,8 +127,21 @@
 					<input type="checkbox" id="signup-info" class="modal-toggle" />
 					<div class="modal">
 						<div class="modal-box">
-							<h3 class="font-bold text-lg">Passsword Requirment</h3>
-							<p class="py-4">something la idk what do put</p>
+							<h3 class="font-bold text-lg">Website Information:</h3>
+							<p class="py-4">
+								This website is created and maintain by Bill.IHCha, only people with a Chairo email are able to create
+								an account here because of lack of storage in my server. If you only want to test this website, there is
+								a guest mode which you can enter by leaving both Email and Password field empty and click Login. If you
+								want to create an account here, please be mindful that I won't take any responsibility if you lost the
+								file you uploaded because it's hard for 1 developer to keep million of project maintained so make sure
+								to have a backup of the file somewhere else. If you encounter any bugs you can talk to me in real life
+								if you want to help me improve this website, or you can join my
+								<a class="text-blue-300 underline" href="https://discord.gg/Xx8EaRzC33" rel="noopener" target="_blank"
+									>discord server</a
+								>
+								if you have Discord.
+							</p>
+							<!-- TODO: ^^^ Also create issue on Github -->
 							<div class="flex flex-row modal-action">
 								<label for="signup-info" class="btn">Cancel</label>
 								<label for="signup-info" class="btn" onclick="signup();">Continue</label>
@@ -110,6 +154,41 @@
 
 		<!-- Import JS -->
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-		<script src="/sign-up.js"></script>
+		<script>
+			'use strict';
+
+			$(window).on('load', () => {
+				$('.email').focus();
+			});
+
+			function signup() {
+				$('.loading').removeClass('hidden');
+				$.ajax({
+					url: '/signup',
+					data: { email: $('.email').val(), password: $('.password').val() },
+					type: 'POST',
+					error: (error) => {
+						if (error.status === 0)
+							return $('.error-text').text(
+								'Internet error! Please make sure you have good internet connect and not opening this HTML from local machine!',
+							);
+						$('.error-text').html(
+							error.responseText
+								.replaceAll(/<(.*), (.*)>/g, '<a href="$1" class="link link-primary">$2</a>')
+								.replaceAll('\n', '<br/>'),
+						);
+					},
+					success: () => {
+						$('.error-text').html(
+							'Please verify your account via the email received to<br/>activate your account. The email may be in your junk folder!',
+						);
+					},
+					complete: () => {
+						$('.loading').addClass('hidden');
+						$('.error').show();
+					},
+				});
+			}
+		</script>
 	</body>
 </html>

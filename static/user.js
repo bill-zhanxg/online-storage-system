@@ -1,5 +1,17 @@
+'use strict';
+
 let currentPath = $('body').attr('currentPath') || '/';
 let progresses = [];
+
+$(window).on('load', () => {
+	if (!localStorage.getItem('guest')) {
+		const modal = $('#guest-mode-modal');
+		if (modal.length > 0) {
+			modal.prop('checked', true);
+			localStorage.setItem('guest', true);
+		}
+	}
+});
 
 $('.files').on('load', () => {
 	$('.loading').hide();
@@ -10,13 +22,65 @@ function reloadIframe() {
 	$('.files').attr('src', currentPath + '?file=true');
 }
 
+function reloadStorage(e) {
+	let targetEl = e.currentTarget;
+	if (targetEl && !targetEl.matches(':focus'))
+		$.post('/storage', (data) => {
+			const percentage = data.used / data.total;
+			const storagePercentage = $('.storage-percentage');
+			storagePercentage.val(percentage);
+			if (percentage < 0.8) storagePercentage.addClass('progress-success');
+			else if (percentage < 0.9) storagePercentage.addClass('progress-warning');
+			else storagePercentage.addClass('progress-error');
+			$('.used-storage').text(`${data.used}MB Used`);
+			$('.left-storage').text(`${Math.max(data.total - data.used, 0)}MB Left`);
+		}).fail(() => alert('There is an error getting storage percentage!'));
+}
+
 function hideProgressBar() {
 	$('.filesParent').hide();
 	$('.loading').show();
 }
 
 function logout() {
-	$.post('/auth/logout', () => document.location.reload(true)).fail(() => alert('There is an error logging out!'));
+	$.post('/auth/logout', () => location.reload(true)).fail(() => alert('There is an error logging out!'));
+}
+
+function changePassword() {
+	const currentPassword = $('.current-password').val();
+	const newPassword = $('.new-password').val();
+
+	$.ajax({
+		url: '/account/password',
+		method: 'PATCH',
+		data: { currentPassword, newPassword },
+		error: (error) => {
+			$('.change-password-error').text(error.responseText);
+		},
+		success: () => location.reload(true),
+	});
+}
+
+function deleteAccount() {
+	$('.loadingOverlay').removeClass('hidden');
+	$.ajax({
+		url: '/account/delete',
+		method: 'DELETE',
+		error: (error) => {
+			$('.delete-account-error').text(error.responseText);
+			$('.loadingOverlay').addClass('hidden');
+		},
+		success: () => location.reload(true),
+	});
+}
+
+function checkAndCloseDropDown(e) {
+	let targetEl = e.currentTarget;
+	if (targetEl && targetEl.matches(':focus')) {
+		setTimeout(() => {
+			targetEl.blur();
+		}, 0);
+	}
 }
 
 function checkAllChanged(event) {
@@ -117,10 +181,6 @@ function fileSelector() {
 	input.click();
 }
 
-function testDelete() {
-	deleteFile(`${currentPath}/test`);
-}
-
 function emptyFile() {
 	const filename = $('.filename');
 	const errorElement = $('.create-file-error');
@@ -193,6 +253,11 @@ let errorQueue = [];
 let uploading;
 /** @type {{ id: number; path: string; files: File }[]} */
 let uploadQueue = [];
+
+$(window).on('beforeunload', () => {
+	if (uploading) return 'All uploads will be stopped if you exit now, continue?';
+});
+
 function uploadFiles(path, files) {
 	const id = uploadId;
 	uploadId++;

@@ -1,22 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+		<meta charset="UTF-8" />
 		<!-- Website Config -->
 		<title>Online Storage System</title>
-		<meta charset="UTF-8" />
-		<link rel="icon" type="image/x-icon" href="" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<noscript>Please enable Javascript for this page to work!</noscript>
-
-		<!-- Meta Data for Discord Rich Embed -->
-		<meta content="Sign up for Online Storage System" property="og:title" />
-		<meta
-			content="If you're have a Chairo email, you can sign up anytime using your Chairo email address. If not, ask Bill.IHCha to give you an account depends on who are you ;?"
-			property="og:description"
-		/>
-		<meta content="https://panel.bill-zhanxg.com/sign-up" property="og:url" />
-		<meta content="/favicon.ico" property="og:image" />
 
 		<!-- Imports -->
 		<script src="https://cdn.tailwindcss.com"></script>
@@ -25,8 +14,15 @@
 	</head>
 
 	<body class="body">
+		<div
+			class="hidden loadingOverlay h-full w-full fixed z-10 left-0 top-0 overflow-x-hidden flex justify-center items-center"
+			style="background-color: rgba(0, 0, 0, 0.65)"
+		>
+			<img src="/loading.gif" alt="Loading GIF" width="10%" />
+		</div>
+
 		<input type="checkbox" id="create-folder-modal" class="modal-toggle" />
-		<label for="create-folder-modal" class="foldermodal modal cursor-pointer">
+		<label for="create-folder-modal" class="modal cursor-pointer">
 			<label class="modal-box relative">
 				<h3 class="font-bold text-lg py-4">New Folder</h3>
 				<b class="create-folder-error text-error"></b>
@@ -72,6 +68,45 @@
 			</label>
 		</label>
 
+		<input type="checkbox" id="change-password-modal" class="modal-toggle" />
+		<label for="change-password-modal" class="modal cursor-pointer">
+			<label class="modal-box relative">
+				<h3 class="font-bold text-lg pt-4 pb-2">Change password</h3>
+				<b class="change-password-error text-error pb-2"></b>
+				<p class="pb-2">Current password</p>
+				<input
+					type="password"
+					placeholder="Current password"
+					class="current-password input input-bordered w-full max-w-xl"
+					onkeypress="if (event.keyCode === 13) $('.new-password').focus();"
+				/>
+				<p class="pt-3 pb-2">New password</p>
+				<input
+					type="password"
+					placeholder="New password"
+					class="new-password input input-bordered w-full max-w-xl"
+					onkeypress="if (event.keyCode === 13) changePassword();"
+				/>
+				<div class="modal-action">
+					<label class="btn w-full" onclick="changePassword();">Change Password</label>
+				</div>
+			</label>
+		</label>
+
+		<input type="checkbox" id="delete-account-modal" class="modal-toggle" />
+		<label for="delete-account-modal" class="modal cursor-pointer">
+			<label class="modal-box relative">
+				<h3 class="font-bold text-lg pt-4 pb-2 text-red-600">DELETE ACCOUNT CONFORMATION</h3>
+				<b class="delete-account-error text-error pb-2"></b>
+				<p class="pb-2">Are you sure you want to delete your account?</p>
+
+				<div class="flex flex-row item-center modal-action">
+					<label for="delete-account-modal" class="btn w-1/2">Cancel</label>
+					<label class="btn btn-error w-1/2" onclick="deleteAccount();">Delete</label>
+				</div>
+			</label>
+		</label>
+
 		<div class="p-8 pb-4">
 			<div class="flex flex-col md:flex-row md:gap-4 md:justify-between md:items-center">
 				<div class="text-lg breadcrumbs" style="overflow-x: overlay">
@@ -95,10 +130,43 @@
 						>
 					</label>
 					<div class="flex items-center gap-4 md:gap-2 md:mr-5 w-full">
-						<label class="flex-1 btn btn-primary" onclick="logout();">log out lel</label>
 						<label class="flex-1 btn btn-primary modal-button" for="create-folder-modal">Create Folder</label>
 						<label class="flex-1 btn btn-primary modal-button" for="create-file-modal">New File</label>
 						<label class="flex-1 btn btn-primary" onclick="fileSelector()">Upload File</label>
+						<div class="dropdown dropdown-end flex">
+							<label
+								tabindex="0"
+								class="btn btn-ghost btn-square"
+								onmousedown="checkAndCloseDropDown(event); reloadStorage(event);"
+								><i class="fa-solid fa-user fa-xl absolute"></i
+							></label>
+							<ul
+								tabindex="0"
+								class="dropdown-content menu menu-compact p-2 shadow bg-base-100 rounded-box w-52 top-14 border-2 border-indigo-600 shadow-lg shadow-black"
+							>
+								<p class="email text-xs mx-4 mt-2 text-indigo-600 text-ellipsis overflow-hidden"></p>
+								<div class="px-4 my-2">
+									<progress class="storage-percentage progress w-full" max="1"></progress>
+									<div class="flex items-center">
+										<p class="used-storage flex-1 text-xs"></p>
+										<p class="left-storage flex-none text-xs"></p>
+									</div>
+								</div>
+								<!-- <li onclick="document.activeElement.blur();"><a>Item 1</a></li> -->
+								<li><label class="guest-disable-btn" for="change-password-modal">Change Password</label></li>
+								<li><a onclick="logout();">Logout</a></li>
+								<div class="divider text-xs">Danger Zone</div>
+								<li>
+									<label
+										class="guest-disable-btn bg-red-500 text-white hover:bg-red-600 active:bg-red-500"
+										for="delete-account-modal"
+										>Delete Account</label
+									>
+								</li>
+							</ul>
+						</div>
+
+						<!-- <label class="flex-1 btn btn-ghost btn-square w-1"><i class="fa-solid fa-user fa-xl absolute"></i></label> -->
 					</div>
 				</div>
 			</div>
@@ -114,7 +182,3 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="/user.js"></script>
 </html>
-
-<!-- TODO-BACKEND: Add account menu and make sure to add admin control panel which allows me to create new accounts manually -->
-<!-- TODO-FRONTEND: conformation box before exit while downloading -->
-<!-- TODO-FRONTEND: conformation box when uploading folder with too many sub-folders -->
