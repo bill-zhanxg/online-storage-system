@@ -23,14 +23,26 @@ const port = 3000;
 const domain = `localhost:${port}`;
 // const domain = 'storage.bill-zhanxg.com';
 
-// TODO-BACKEND: implement cache html file
-//  TODO-FRONTEND: fix all meta tag
-//  TODO-FRONTEND: add storage limit
+// TODO-BACKEND: TEST: implement cache html file
+//  TODO-FRONTEND: TEST: Add loading to every request
+//  TODO-FRONTEND: TEST add storage limit
 // TODO: check bulk file upload
 
 process.on('uncaughtException', (err, origin) => {
 	console.log(err);
 });
+
+// Cache HTMLs
+const HTMLs = {
+	admin: fs.readFileSync(path.join(__dirname + '/views/admin.html')),
+	iframe: fs.readFileSync(path.join(__dirname + '/views/iframe.html')),
+	login: fs.readFileSync(path.join(__dirname + '/views/login.html')),
+	notFound: fs.readFileSync(path.join(__dirname + '/views/not-found.html')),
+	passwordReset: fs.readFileSync(path.join(__dirname + '/views/password-reset.html')),
+	reset: fs.readFileSync(path.join(__dirname + '/views/reset.html')),
+	signup: fs.readFileSync(path.join(__dirname + '/views/signup.html')),
+	user: fs.readFileSync(path.join(__dirname + '/views/user.html')),
+};
 
 const transporter = nodemailer.createTransport({
 	host: 'smtp.office365.com',
@@ -161,13 +173,13 @@ app.get('/verify', async (req, res, next) => {
 // Serve Static HTML
 app.get('/password-reset', async (req, res, next) => {
 	if (req.session.loggedin || !req.query.code) return next();
-	res.sendFile(path.join(__dirname + '/views/password-reset.html'));
+	res.send(HTMLs.passwordReset);
 });
 
 // Send Email
 app.post('/password-reset', async (req, res) => {
 	const send = (text) => res.status(400).send(text).end();
-	const email = req.body.email;
+	let email = req.body.email;
 	if (!email) return send('Please fill the email field before reset password!');
 	if (!email.includes('@')) email += '@chairo.vic.edu.au';
 	const docs = await databases.listDocuments(config.appwrite_database_id, config.appwrite_collection_id, [
@@ -225,7 +237,7 @@ app.patch('/password-reset', async (req, res) => {
 
 app.get('/reset', async (req, res, next) => {
 	if (req.session.loggedin) return next();
-	res.sendFile(path.join(__dirname + '/views/reset.html'));
+	res.send(HTMLs.reset);
 });
 
 app.delete('/account/reset', async (req, res) => {
@@ -287,7 +299,7 @@ app.get('/download', async (req, res, next) => {
 
 app.get('/signup', (req, res, next) => {
 	if (req.session.loggedin || req.query.file) return next();
-	res.sendFile(path.join(__dirname + '/views/signup.html'));
+	res.send(HTMLs.signup);
 });
 
 app.use('/auth', (err, req, res, next) => {
@@ -412,8 +424,7 @@ function checkPath(id, dir, extra = []) {
 
 app.get('*', async (req, res) => {
 	let file = req.query.file ? true : false;
-	if (!req.session.loggedin)
-		return file ? res.sendStatus(401) : res.sendFile(path.join(__dirname + '/views/login.html'));
+	if (!req.session.loggedin) return file ? res.sendStatus(401) : res.send(HTMLs.login);
 
 	let userId = req.session.data.id;
 	let dir = req.params[0];
@@ -426,8 +437,8 @@ app.get('*', async (req, res) => {
 	let currentPath = folders.length > 0 ? `/${folders.join('/')}` : '';
 
 	if (file) {
-		if (!fs.existsSync(checkPath(userId, dir))) return res.sendFile(path.join(__dirname + '/views/not-found.html'));
-		const $ = cheerio.load(await fs.promises.readFile(path.join(__dirname + '/views/iframe.html')));
+		if (!fs.existsSync(checkPath(userId, dir))) return res.send(HTMLs.notFound);
+		const $ = cheerio.load(HTMLs.iframe);
 
 		if ((await fs.promises.stat(checkPath(userId, dir))).isDirectory()) {
 			fs.readdir(checkPath(userId, dir), async (err, files) => {
@@ -524,7 +535,7 @@ app.get('*', async (req, res) => {
 			res.download(checkPath(userId, dir));
 		}
 	} else {
-		let $ = cheerio.load(await fs.promises.readFile(path.join(__dirname + '/views/user.html')));
+		let $ = cheerio.load(HTMLs.user);
 
 		let append = [];
 		for (let folder of folders) {
@@ -578,23 +589,31 @@ app.post('/files/upload', apiRateLimit, (req, res) => {
 	/** @type {fs.WriteStream[]} */
 	let streams = [];
 
-	req.busboy.on('file', (fieldname, file, info) => {
+	req.busboy.on('file', async (fieldname, file, info) => {
 		let path = req.body.path;
-		if (path === undefined) return res.sendStatus(400);
+		let size = req.body.size;
+		if (path === undefined || size === undefined) return res.sendStatus(400);
+		const userSize = await util.getUserSize(fastFolderSize, checkPath, req, databases, config);
+		if (userSize.total - userSize.used < size / (1000 * 1000)) return error(405);
 		let name = decodeURI(info.filename) || 'New file';
 		let filePath = checkPath(req.session.data.id, path, [name]);
 		files.push(filePath);
 		let stream = fs.createWriteStream(filePath);
-		stream.once('error', error);
+		stream.once('error', () => error());
 		streams.push(stream);
+		let readBytes = 0;
+		stream.on('data', () => {
+			readBytes += chunk.length;
+			if (userSize.total - userSize.used < readBytes / (1000 * 1000)) error(405);
+		});
 		// Pipe it trough
 		file.pipe(stream);
 	});
 
-	function error() {
+	function error(err = 500) {
 		for (const stream of streams) stream.destroy();
 		files.forEach((file) => fs.unlink(file, () => {}));
-		res.sendStatus(500);
+		res.sendStatus(err);
 	}
 
 	req.busboy.once('finish', () => {
@@ -646,17 +665,7 @@ app.post('/folder/create', (req, res) => {
 });
 
 app.post('/storage', async (req, res) => {
-	const userPath = checkPath(req.session.data.id);
-	const megaBytes = Math.round((await fastFolderSize(userPath)) / (1000 * 1000)).toString();
-	const total =
-		req.session.id === 0
-			? 1000
-			: (
-					await databases.listDocuments(config.appwrite_database_id, config.appwrite_collection_id, [
-						Query.equal('email', req.session.data.email),
-					])
-			  ).documents[0]?.storage || 1000;
-	res.send({ used: megaBytes, total });
+	res.send(await util.getUserSize(fastFolderSize, checkPath, req, databases, config));
 });
 
 app.delete('/account/delete', (req, res) => {

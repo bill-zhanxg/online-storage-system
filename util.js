@@ -17,4 +17,17 @@ function formatDate(date) {
 	);
 }
 
-module.exports = { formatBytes, formatDate };
+async function getUserSize(fastFolderSize, checkPath, req, databases, config) {
+	const megaBytes = Math.round((await fastFolderSize(checkPath(req.session.data.id))) / (1000 * 1000)).toString();
+	const total =
+		req.session.id === 0
+			? 1000
+			: (
+					await databases.listDocuments(config.appwrite_database_id, config.appwrite_collection_id, [
+						Query.equal('email', req.session.data.email),
+					])
+			  ).documents[0]?.storage || 1000;
+	return { used: megaBytes, total };
+}
+
+module.exports = { formatBytes, formatDate, getUserSize };

@@ -103,6 +103,7 @@
 		});
 
 		function login() {
+			$('.loading').removeClass('hidden');
 			$.ajax({
 				url: '/auth',
 				data: { email: $('.usernameInput').val(), password: $('.passwordInput').val() },
@@ -118,6 +119,7 @@
 							.replaceAll('\n', '<br/>'),
 					);
 					$('.error').show();
+					$('.loading').addClass('hidden');
 				},
 				success: () => document.location.reload(true),
 			});

@@ -131,4 +131,5 @@ dist
 
 # other
 storedFiles/
+package-lock.json
 config.json

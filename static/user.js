@@ -47,6 +47,7 @@ function logout() {
 }
 
 function changePassword() {
+	$('.loadingOverlay').removeClass('hidden');
 	const currentPassword = $('.current-password').val();
 	const newPassword = $('.new-password').val();
 
@@ -56,6 +57,7 @@ function changePassword() {
 		data: { currentPassword, newPassword },
 		error: (error) => {
 			$('.change-password-error').text(error.responseText);
+			$('.loadingOverlay').addClass('hidden');
 		},
 		success: () => location.reload(true),
 	});
@@ -297,6 +299,10 @@ function uploadFiles(path, files) {
 function startUpload(id, path, files) {
 	let data = new FormData();
 	data.append('path', path);
+	data.append(
+		'size',
+		files.reduce((prev, curr) => prev + curr.size, 0),
+	);
 	for (let file of files) {
 		data.append('file', file, encodeURI(file.name));
 	}
@@ -326,13 +332,17 @@ function startUpload(id, path, files) {
 			},
 			url: '/files/upload',
 			method: 'POST',
-			data: data,
+			data,
 			contentType: false,
 			processData: false,
 			statusCode: {
 				401: () => {
 					alert("Error uploading file: you're not logged in!");
 					location.reload(true);
+				},
+				405: () => {
+					alert('Unable to upload the file(s): Storage is full!');
+					emptyUploads();
 				},
 				500: () => {
 					alert('Unable to upload this file: Server error occurred!');
