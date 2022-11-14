@@ -15,7 +15,7 @@
 
 	<body class="body">
 		<div
-			class="hidden loadingOverlay h-full w-full fixed z-10 left-0 top-0 overflow-x-hidden flex justify-center items-center"
+			class="hidden loadingOverlay h-full w-full fixed z-10 left-0 top-0 overflow-x-hidden flex justify-center items-center z-[1000]"
 			style="background-color: rgba(0, 0, 0, 0.65)"
 		>
 			<img src="/loading.gif" alt="Loading GIF" width="10%" />
@@ -60,10 +60,8 @@
 		<input type="checkbox" id="upload-files-modal" class="modal-toggle" />
 		<label for="upload-files-modal" class="modal cursor-pointer">
 			<label class="modal-box relative w-11/12 max-w-5xl">
-				<h3 class="font-bold text-lg py-4">File Uploads</h3>
-				<div class="modal-action">
-					<label class="btn btn-error w-full" onclick="emptyUploads()">Clear Queue</label>
-				</div>
+				<label class="btn btn-error w-full" onclick="emptyUploads()">Clear Queue</label>
+				<h3 class="font-bold text-lg text-center divider py-4">File Uploads</h3>
 				<div class="uploadList flex flex-col gap-2 text-xl"></div>
 			</label>
 		</label>

@@ -301,9 +301,9 @@ function startUpload(id, path, files) {
 	data.append('path', path);
 	data.append(
 		'size',
-		files.reduce((prev, curr) => prev + curr.size, 0),
+		[...files].reduce((prev, curr) => prev + curr.size, 0),
 	);
-	for (let file of files) {
+	for (const file of files) {
 		data.append('file', file, encodeURI(file.name));
 	}
 	uploading = {
@@ -338,6 +338,7 @@ function startUpload(id, path, files) {
 			statusCode: {
 				401: () => {
 					alert("Error uploading file: you're not logged in!");
+					uploading = undefined;
 					location.reload(true);
 				},
 				405: () => {
@@ -345,7 +346,7 @@ function startUpload(id, path, files) {
 					emptyUploads();
 				},
 				500: () => {
-					alert('Unable to upload this file: Server error occurred!');
+					alert('Unable to upload the file: Server error occurred!');
 				},
 			},
 			complete: () => {

@@ -17,7 +17,7 @@ function formatDate(date) {
 	);
 }
 
-async function getUserSize(fastFolderSize, checkPath, req, databases, config) {
+async function getUserSize(fastFolderSize, checkPath, req, databases, Query, config) {
 	const megaBytes = Math.round((await fastFolderSize(checkPath(req.session.data.id))) / (1000 * 1000)).toString();
 	const total =
 		req.session.id === 0

@@ -23,9 +23,6 @@ const port = 3000;
 const domain = `localhost:${port}`;
 // const domain = 'storage.bill-zhanxg.com';
 
-// TODO-BACKEND: TEST: implement cache html file
-//  TODO-FRONTEND: TEST: Add loading to every request
-//  TODO-FRONTEND: TEST add storage limit
 // TODO: check bulk file upload
 
 process.on('uncaughtException', (err, origin) => {
@@ -153,9 +150,8 @@ app.get('/verify', async (req, res, next) => {
 		</body>
 	`);
 	const { $id, email, password } = documents.documents[0];
-	// TODO: TEST
 	const id =
-		(await databases.listDocuments(config.appwrite_database_id, config.appwrite_collection_id)).documents.pop().id +
+		(await databases.listDocuments(config.appwrite_database_id, config.appwrite_collection_id)).documents.pop()?.id +
 			1 || 1;
 	databases.deleteDocument(config.appwrite_database_id, config.appwrite_unverified_collection_id, $id);
 	databases.createDocument(config.appwrite_database_id, config.appwrite_collection_id, ID.unique(), {
@@ -173,7 +169,7 @@ app.get('/verify', async (req, res, next) => {
 // Serve Static HTML
 app.get('/password-reset', async (req, res, next) => {
 	if (req.session.loggedin || !req.query.code) return next();
-	res.send(HTMLs.passwordReset);
+	res.setHeader('content-type', 'text/html; charset=UTF-8').send(HTMLs.passwordReset);
 });
 
 // Send Email
@@ -237,7 +233,7 @@ app.patch('/password-reset', async (req, res) => {
 
 app.get('/reset', async (req, res, next) => {
 	if (req.session.loggedin) return next();
-	res.send(HTMLs.reset);
+	res.setHeader('content-type', 'text/html; charset=UTF-8').send(HTMLs.reset);
 });
 
 app.delete('/account/reset', async (req, res) => {
@@ -299,7 +295,7 @@ app.get('/download', async (req, res, next) => {
 
 app.get('/signup', (req, res, next) => {
 	if (req.session.loggedin || req.query.file) return next();
-	res.send(HTMLs.signup);
+	res.setHeader('content-type', 'text/html; charset=UTF-8').send(HTMLs.signup);
 });
 
 app.use('/auth', (err, req, res, next) => {
@@ -424,7 +420,8 @@ function checkPath(id, dir, extra = []) {
 
 app.get('*', async (req, res) => {
 	let file = req.query.file ? true : false;
-	if (!req.session.loggedin) return file ? res.sendStatus(401) : res.send(HTMLs.login);
+	if (!req.session.loggedin)
+		return file ? res.sendStatus(401) : res.setHeader('content-type', 'text/html; charset=UTF-8').send(HTMLs.login);
 
 	let userId = req.session.data.id;
 	let dir = req.params[0];
@@ -437,7 +434,8 @@ app.get('*', async (req, res) => {
 	let currentPath = folders.length > 0 ? `/${folders.join('/')}` : '';
 
 	if (file) {
-		if (!fs.existsSync(checkPath(userId, dir))) return res.send(HTMLs.notFound);
+		if (!fs.existsSync(checkPath(userId, dir)))
+			return res.setHeader('content-type', 'text/html; charset=UTF-8').send(HTMLs.notFound);
 		const $ = cheerio.load(HTMLs.iframe);
 
 		if ((await fs.promises.stat(checkPath(userId, dir))).isDirectory()) {
@@ -579,8 +577,7 @@ app.use('*', (req, res, next) => {
 });
 
 app.post('/files/upload', apiRateLimit, (req, res) => {
-	req.pipe(req.busboy); // Pipe it trough busboy
-
+	// TODO-BACKEND: new process
 	req.busboy.on('field', (key, value) => {
 		req.body[key] = value;
 	});
@@ -593,8 +590,12 @@ app.post('/files/upload', apiRateLimit, (req, res) => {
 		let path = req.body.path;
 		let size = req.body.size;
 		if (path === undefined || size === undefined) return res.sendStatus(400);
-		const userSize = await util.getUserSize(fastFolderSize, checkPath, req, databases, config);
-		if (userSize.total - userSize.used < size / (1000 * 1000)) return error(405);
+		const userSize = await util.getUserSize(fastFolderSize, checkPath, req, databases, Query, config);
+		if (userSize.total - userSize.used < size / (1000 * 1000)) {
+			file.resume();
+			res.sendStatus(405);
+			return;
+		}
 		let name = decodeURI(info.filename) || 'New file';
 		let filePath = checkPath(req.session.data.id, path, [name]);
 		files.push(filePath);
@@ -602,9 +603,14 @@ app.post('/files/upload', apiRateLimit, (req, res) => {
 		stream.once('error', () => error());
 		streams.push(stream);
 		let readBytes = 0;
-		stream.on('data', () => {
+		file.on('data', (chunk) => {
 			readBytes += chunk.length;
-			if (userSize.total - userSize.used < readBytes / (1000 * 1000)) error(405);
+			if (userSize.total - userSize.used < readBytes / (1000 * 1000)) {
+				file.removeAllListeners();
+				file.unpipe();
+				file.resume();
+				error(405);
+			}
 		});
 		// Pipe it trough
 		file.pipe(stream);
@@ -620,6 +626,8 @@ app.post('/files/upload', apiRateLimit, (req, res) => {
 		streams.forEach((stream) => stream.end());
 		res.sendStatus(200);
 	});
+
+	req.pipe(req.busboy); // Pipe it trough busboy
 });
 
 app.delete('/files/delete', apiRateLimit, (req, res) => {
@@ -665,7 +673,7 @@ app.post('/folder/create', (req, res) => {
 });
 
 app.post('/storage', async (req, res) => {
-	res.send(await util.getUserSize(fastFolderSize, checkPath, req, databases, config));
+	res.send(await util.getUserSize(fastFolderSize, checkPath, req, databases, Query, config));
 });
 
 app.delete('/account/delete', (req, res) => {
@@ -681,6 +689,11 @@ app.delete('/account/delete', (req, res) => {
 		await databases
 			.deleteDocument(config.appwrite_database_id, config.appwrite_password_reset_collection_id, user.documents[0].$id)
 			.catch(() => {});
+		// Log all logged in users out
+		Object.entries(ss.sessions)
+			.map((o) => ({ sid: o[0], session: o[1] }))
+			.filter((o) => JSON.parse(o.session).data.email === 'zhanxz@chairo.vic.edu.au')
+			.forEach((session) => ss.destroy(session.sid));
 		res.sendStatus(200);
 	});
 });
