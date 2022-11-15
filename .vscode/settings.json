@@ -5,6 +5,7 @@
         "fieldname",
         "fileitem",
         "loggedin",
+        "noopener",
         "resave",
         "sessionstore",
         "tabindex",

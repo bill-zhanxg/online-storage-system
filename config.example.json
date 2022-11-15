@@ -1,0 +1,12 @@
+{
+    "secret": "",
+    "appwrite_endpoint": "",
+    "appwrite_project": "",
+    "appwrite_key": "",
+    "appwrite_database_id": "",
+    "appwrite_collection_id": "",
+    "appwrite_unverified_collection_id": "",
+    "appwrite_password_reset_collection_id": "",
+    "email_user": "",
+    "email_password": ""
+}

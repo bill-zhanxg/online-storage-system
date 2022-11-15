@@ -19,9 +19,9 @@ const iconMapping = require('./iconMapping.json');
 const { createHash } = require('crypto');
 const SMTPTransport = require('nodemailer/lib/smtp-transport');
 const { v4 } = require('uuid');
-const port = 3000;
-const domain = `localhost:${port}`;
-// const domain = 'storage.bill-zhanxg.com';
+const port = 3001;
+// const domain = `localhost:${port}`;
+const domain = 'storage.bill-zhanxg.com';
 
 // TODO: check bulk file upload
 
@@ -133,21 +133,28 @@ app.get('/verify', async (req, res, next) => {
 		[Query.equal('id', code)],
 	);
 
-	if (documents.total === 0)
+	if (documents.total < 1)
 		return res.send(`
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
-		<script src="https://cdn.tailwindcss.com"></script>
-		<link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
-		<body>
-			<div class="flex flex-col justify-center items-center h-[100vh]">
-				<div class="text-center bg-base-200 py-8 px-12 rounded-xl">
-					<p class="text-5xl font-bold">
-						<i class="fa-solid fa-triangle-exclamation"></i> 405 <i class="fa-solid fa-triangle-exclamation"></i>
-					</p>
-					<p class="text-3xl">Invalid Code</p>
+			<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
+			<script src="https://cdn.tailwindcss.com"></script>
+			<link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
+			<body>
+				<div class="flex flex-col justify-center items-center h-[100vh]">
+					<div class="text-center bg-base-200 py-8 px-12 rounded-xl">
+						<p class="text-5xl font-bold">
+							<i class="fa-solid fa-triangle-exclamation"></i> 405 <i class="fa-solid fa-triangle-exclamation"></i>
+						</p>
+						<p class="text-3xl">Invalid Code</p>
+						<b>Think it's an error? <a
+							class="text-blue-300 underline"
+							href="/"
+							rel="noopener"
+							target="_blank"
+							>Login now!</a>
+						</b>
+					</div>
 				</div>
-			</div>
-		</body>
+			</body>
 	`);
 	const { $id, email, password } = documents.documents[0];
 	const id =
@@ -160,10 +167,9 @@ app.get('/verify', async (req, res, next) => {
 		password,
 	});
 	req.session.loggedin = true;
-	req.session.data = { id, email: email, password: password };
+	req.session.data = { id, email, password };
 	req.session.save();
 	res.redirect('/');
-	res.end();
 });
 
 // Serve Static HTML
@@ -366,8 +372,11 @@ app.post('/signup', authRateLimit, async (req, res) => {
 	const password = req.body.password;
 	if (email === undefined || password === undefined) return res.sendStatus(400);
 	if (!email.trim() && !password.trim()) return send('Please fill in all fields!');
+	if (email.includes('@')) {
+		const domain = email.split('@').pop();
+		if (domain !== 'chairo.vic.edu.au') return send('Only Chairo emails are supported at this time!');
+	} else email += '@chairo.vic.edu.au';
 	if (email.includes('+')) email = email.substring(0, email.indexOf('+'));
-	email += '@chairo.vic.edu.au';
 
 	const hashedPassword = createHash('sha3-512').update(password).digest('hex');
 
@@ -382,7 +391,7 @@ app.post('/signup', authRateLimit, async (req, res) => {
 		sendMail(unverifiedDocs.documents[0].email, unverifiedDocs.documents[0].id)
 			.then(() =>
 				send(
-					'Please verify your account via the email received to\nactivate your account. The email may be in your junk folder!\nSomeone else used this email? </reset, Reset your account!>',
+					'Please verify your account via the email received to\nactivate your account. The email will most likely be in your junk folder!\nSomeone else used this email? </reset, Reset your account!>',
 				),
 			)
 			.catch(() =>
@@ -465,7 +474,7 @@ app.get('*', async (req, res) => {
 							</div>
 							<ul id="${id}" class="noneClick context-menu menu menu-compact bg-base-200 w-40 p-2 rounded-box absolute hidden">
 								<li><a onclick="downloadFile(['${filename}']); closeMenu($('#${id}'));">Download</a></li>
-								<li><a onclick="renameFileModal('${filename}'); closeMenu($('#${id}'));">Rename</a></li>
+								<li><a onclick="renameFileModal('${filename}'); closeMenu($('#${id}'));">Move/Rename</a></li>
 								<li><a onclick="duplicateFile('${filename}', ${isDirectory}); closeMenu($('#${id}'));">Duplicate</a></li>
 								<li><label for="props-file-modal-${id}" onclick="closeMenu($('#${id}'));">Properties</label></li>
 								<li><a class="bg-red-500 text-white hover:bg-red-600 active:bg-red-500" onclick="deleteFile('${filename}'); closeMenu($('#${id}'));">Delete</a></li>
@@ -555,10 +564,10 @@ app.get('*', async (req, res) => {
 						<label class="modal-box relative">
 							<h3 class="font-bold text-lg">Guest Mode</h3>
 							<p class="py-4">
-								Hello, you're currently in guest mode! In this mode, you're able to do anything that normal user can do except
-								change password and delete account without an account. But please be mindful that everyone on the internet
-								have access to this storage, that means everyone will be able to view, download or delete the file you
-								uploaded here. To create an account, sign-out and create one!
+								Hello, you're currently in guest mode! In this mode, you're able to do anything that normal users can do
+								except change the password and the delete account. Please be mindful that everyone on the internet has
+								access to this storage, which means everyone will be able to view, download or delete the file you upload
+								here. To create an account, sign out and create one!
 							</p>
 							<div class="modal-action">
 								<label class="btn w-full" for="guest-mode-modal">Got it!</label>
@@ -692,7 +701,7 @@ app.delete('/account/delete', (req, res) => {
 		// Log all logged in users out
 		Object.entries(ss.sessions)
 			.map((o) => ({ sid: o[0], session: o[1] }))
-			.filter((o) => JSON.parse(o.session).data.email === 'zhanxz@chairo.vic.edu.au')
+			.filter((o) => JSON.parse(o.session).data?.email === req.session.data.email)
 			.forEach((session) => ss.destroy(session.sid));
 		res.sendStatus(200);
 	});
@@ -715,7 +724,7 @@ app.patch('/account/password', async (req, res) => {
 	// Log all logged in users out
 	Object.entries(ss.sessions)
 		.map((o) => ({ sid: o[0], session: o[1] }))
-		.filter((o) => JSON.parse(o.session).data.email === 'zhanxz@chairo.vic.edu.au')
+		.filter((o) => JSON.parse(o.session).data?.email === req.session.data.email)
 		.forEach((session) => ss.destroy(session.sid));
 	res.sendStatus(200);
 });
