@@ -132,7 +132,6 @@ app.get('/verify', async (req, res, next) => {
 		[Query.equal('id', code)],
 	);
 
-	console.log(documents);
 	if (documents.total < 1)
 		return res.setHeader('content-type', 'text/html; charset=UTF-8').send(`
 			<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
