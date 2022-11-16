@@ -205,7 +205,7 @@ app.post('/password-reset', async (req, res) => {
 		});
 	if (typeof result === 'string') return send(result);
 	sendMail(email, result.code, false)
-		.then(() => send('Please reset your password via the email received.\nThe email may be in your junk folder!'))
+		.then(() => send('Please reset your password via the email received.\nThe email will most likely be in your junk folder\nand it may take more than 1 minute for the email to arrive!'))
 		.catch(() => send('Failed to send verification email!\nMake sure the email you entered is correct!'));
 });
 
@@ -353,7 +353,7 @@ app.post('/auth', authRateLimit, async (req, res) => {
 		const send = (text) => res.status(400).send(text).end();
 		if (prevDocs.total > 0)
 			send(
-				'Please verify your account via the email received to\nactivate your account. The email may be in your junk folder!',
+				'Please verify your account via the email received to activate your\naccount. The email will most likely be in your junk folder\nand it may take more than 1 minute for the email to arrive!',
 			);
 		else send('Incorrect Email and/or Password! Try <reset password>!');
 		return;
@@ -390,7 +390,7 @@ app.post('/signup', authRateLimit, async (req, res) => {
 		sendMail(unverifiedDocs.documents[0].email, unverifiedDocs.documents[0].id)
 			.then(() =>
 				send(
-					'Please verify your account via the email received to\nactivate your account. The email will most likely be in your junk folder!\nSomeone else used this email? </reset, Reset your account!>',
+					'Please verify your account via the email received to activate your\naccount. The email will most likely be in your junk folder and\nit may take more than 1 minute for the email to arrive!\nSomeone else used this email? </reset, Reset your account!>',
 				),
 			)
 			.catch(() =>
