@@ -23,8 +23,6 @@ const port = 3001;
 // const domain = `localhost:${port}`;
 const domain = 'storage.bill-zhanxg.com';
 
-// TODO: check bulk file upload
-
 process.on('uncaughtException', (err, origin) => {
 	console.log(err);
 });
@@ -125,7 +123,8 @@ app.use(
 
 app.get('/verify', async (req, res, next) => {
 	const code = req.query.code;
-	if (req.session.loggedin || code === undefined) return next();
+	// Check if bing bot is trying to get embed
+	if (req.session.loggedin || code === undefined || req.headers.accept === '*/*') return next();
 
 	const documents = await databases.listDocuments(
 		config.appwrite_database_id,
@@ -134,7 +133,7 @@ app.get('/verify', async (req, res, next) => {
 	);
 
 	if (documents.total < 1)
-		return res.send(`
+		return res.setHeader('content-type', 'text/html; charset=UTF-8').send(`
 			<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" />
 			<script src="https://cdn.tailwindcss.com"></script>
 			<link href="https://cdn.jsdelivr.net/npm/daisyui@2.24.0/dist/full.css" rel="stylesheet" type="text/css" />
@@ -174,7 +173,7 @@ app.get('/verify', async (req, res, next) => {
 
 // Serve Static HTML
 app.get('/password-reset', async (req, res, next) => {
-	if (req.session.loggedin || !req.query.code) return next();
+	if (req.session.loggedin || !req.query.code || req.headers.accept === '*/*') return next();
 	res.setHeader('content-type', 'text/html; charset=UTF-8').send(HTMLs.passwordReset);
 });
 
@@ -206,7 +205,7 @@ app.post('/password-reset', async (req, res) => {
 		});
 	if (typeof result === 'string') return send(result);
 	sendMail(email, result.code, false)
-		.then(() => send('Please reset your password via the email received.\nThe email may be in your junk folder!'))
+		.then(() => send('Please reset your password via the email received.\nThe email will most likely be in your junk folder\nand it may take more than 1 minute for the email to arrive!'))
 		.catch(() => send('Failed to send verification email!\nMake sure the email you entered is correct!'));
 });
 
@@ -354,7 +353,7 @@ app.post('/auth', authRateLimit, async (req, res) => {
 		const send = (text) => res.status(400).send(text).end();
 		if (prevDocs.total > 0)
 			send(
-				'Please verify your account via the email received to\nactivate your account. The email may be in your junk folder!',
+				'Please verify your account via the email received to activate your\naccount. The email will most likely be in your junk folder\nand it may take more than 1 minute for the email to arrive!',
 			);
 		else send('Incorrect Email and/or Password! Try <reset password>!');
 		return;
@@ -391,7 +390,7 @@ app.post('/signup', authRateLimit, async (req, res) => {
 		sendMail(unverifiedDocs.documents[0].email, unverifiedDocs.documents[0].id)
 			.then(() =>
 				send(
-					'Please verify your account via the email received to\nactivate your account. The email will most likely be in your junk folder!\nSomeone else used this email? </reset, Reset your account!>',
+					'Please verify your account via the email received to activate your\naccount. The email will most likely be in your junk folder and\nit may take more than 1 minute for the email to arrive!\nSomeone else used this email? </reset, Reset your account!>',
 				),
 			)
 			.catch(() =>
@@ -451,7 +450,7 @@ app.get('*', async (req, res) => {
 			fs.readdir(checkPath(userId, dir), async (err, files) => {
 				if (err) {
 					$('.filePanel').append('<h1 class="px-14">An error occurred, please refresh this page!</h1>');
-					res.send($.html());
+					res.setHeader('content-type', 'text/html; charset=UTF-8').send($.html());
 				} else {
 					let id = 0;
 					function appendElement(filename, size, icon, isDirectory, dir, creationTime, lastModifiedTime, accessTime) {
@@ -534,7 +533,7 @@ app.get('*', async (req, res) => {
 						$('.filePanel').append('<h1 class="px-14">There is nothing here! Click "NEW FILE" to create a file!</h1>');
 					$('body').attr('currentPath', currentPath);
 					$('.pathname').val(currentPath + '/');
-					res.send($.html());
+					res.setHeader('content-type', 'text/html; charset=UTF-8').send($.html());
 				}
 			});
 		} else {
@@ -576,7 +575,7 @@ app.get('*', async (req, res) => {
 					</label>
 				`);
 		}
-		res.send($.html());
+		res.setHeader('content-type', 'text/html; charset=UTF-8').send($.html());
 	}
 });
 
@@ -586,7 +585,6 @@ app.use('*', (req, res, next) => {
 });
 
 app.post('/files/upload', apiRateLimit, (req, res) => {
-	// TODO-BACKEND: new process
 	req.busboy.on('field', (key, value) => {
 		req.body[key] = value;
 	});
