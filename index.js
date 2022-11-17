@@ -628,12 +628,16 @@ app.post('/files/upload', apiRateLimit, (req, res) => {
 	function error(err = 500) {
 		for (const stream of streams) stream.destroy();
 		files.forEach((file) => fs.unlink(file, () => {}));
-		res.sendStatus(err);
+		try {
+			res.sendStatus(err);
+		} catch {}
 	}
 
 	req.busboy.once('finish', () => {
 		streams.forEach((stream) => stream.end());
-		res.sendStatus(200);
+		try {
+			res.sendStatus(200);
+		} catch {}
 	});
 
 	req.pipe(req.busboy); // Pipe it trough busboy
