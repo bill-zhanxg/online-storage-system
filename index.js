@@ -42,11 +42,19 @@ const HTMLs = {
 const transporter = nodemailer.createTransport({
 	host: config.smtp_host,
 	port: config.smtp_port,
+	secure: config.smtp_secure,
 	auth: {
 		user: config.email_user,
 		pass: config.email_password,
 	},
 });
+transporter
+	.verify()
+	.then(() => console.log('The SMTP test was successful!'))
+	.catch((err) => {
+		console.log('Email test failed with the following error', err);
+		process.exit(1);
+	});
 /**
  * @param {string} receiver - The email address of the user
  * @param {string} code - The uuid of the document
@@ -205,7 +213,11 @@ app.post('/password-reset', async (req, res) => {
 		});
 	if (typeof result === 'string') return send(result);
 	sendMail(email, result.code, false)
-		.then(() => send('Please reset your password via the email received.\nThe email will most likely be in your junk folder\nand it may take more than 1 minute for the email to arrive!'))
+		.then(() =>
+			send(
+				'Please reset your password via the email received.\nThe email will most likely be in your junk folder\nand it may take more than 1 minute for the email to arrive!',
+			),
+		)
 		.catch(() => send('Failed to send verification email!\nMake sure the email you entered is correct!'));
 });
 

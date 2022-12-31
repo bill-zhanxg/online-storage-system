@@ -9,6 +9,7 @@
     "appwrite_password_reset_collection_id": "",
     "smtp_host": "",
     "smtp_port": "",
+    "smtp_secure": false,
     "email_user": "",
     "email_password": ""
 }
