@@ -1,6 +1,6 @@
 # Online-Storage-System
 
-This website is purely for my Think Project and there is no License (Not Copyrighted)!
+This website is purely for my Think Project and it's under MIT license!
 
 I chose to open source it because I think the code here is not optimised because this project is for me to learn front-end and back-end dev, so please don't use this code for production. Feel free to create pull requests or issues if you want to help improve this website
 
