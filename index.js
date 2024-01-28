@@ -19,7 +19,7 @@ const iconMapping = require('./iconMapping.json');
 const { createHash } = require('crypto');
 const SMTPTransport = require('nodemailer/lib/smtp-transport');
 const { v4 } = require('uuid');
-const port = 3001;
+const port = process.env.PORT || 3001;
 // const domain = `localhost:${port}`;
 const domain = 'storage.bill-zhanxg.com';
 
